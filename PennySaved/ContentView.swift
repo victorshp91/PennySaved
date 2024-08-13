@@ -9,15 +9,12 @@ import SwiftUI
 import CoreData
 import Charts
 
-
-
 struct ContentView: View {
     @FetchRequest(
         entity: Saving.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Saving.date, ascending: false)]
     ) var savings: FetchedResults<Saving>
     
-
     @Environment(\.managedObjectContext) private var viewContext
 
     var today: Date {
@@ -36,7 +33,7 @@ struct ContentView: View {
     
     var savingsToday: [Saving] {
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd MMM yyyy" // Adjust this format to match your date format
+        formatter.dateFormat = "dd MMM yyyy"
         let todayString = formatter.string(from: today)
         return savings.filter { formatter.string(from: $0.date ?? Date()) == todayString }
     }
@@ -89,7 +86,7 @@ struct ContentView: View {
                             .frame(width: 65, height: 65)
                         VStack(alignment:.leading) {
                             Text("Welcome, Arina").bold()
-                            Text("Your PennySaved").foregroundStyle(.secondary)
+                            Text("Track your potential savings with PennySaved.").foregroundStyle(.secondary)
                         }
                         .font(.subheadline)
                         Spacer()
@@ -100,7 +97,6 @@ struct ContentView: View {
                                 .foregroundStyle(.black)
                                 .clipShape(Circle())
                         }
-                        
                     }
                     .padding(10)
                     .frame(maxWidth: .infinity)
@@ -108,16 +104,15 @@ struct ContentView: View {
                     .cornerRadius(50)
                     .foregroundStyle(.white)
                     
-                    // THIS MONTH SAVED
+                    // THIS MONTH SAVED & TOTAL SAVINGS
                     HStack {
-                        
-                        HStack{
-                            Image(systemName: "m.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 40)
+                        HStack {
+//                            Image(systemName: "m.circle.fill")
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: 40)
                             VStack(alignment:.leading) {
-                                Text("This Month")
+                                Text("This Month Potential Savings")
                                 Text("$\(totalAmountThisMonth, specifier: "%.2f")").bold()
                             }
                             Spacer()
@@ -128,15 +123,13 @@ struct ContentView: View {
                         .cornerRadius(10)
                         .foregroundStyle(.white)
                         
-                     
-                        
-                        HStack{
-                            Image(systemName: "t.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 40)
+                        HStack {
+//                            Image(systemName: "t.circle.fill")
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: 40)
                             VStack(alignment:.leading) {
-                                Text("Total Saved")
+                                Text("Lifetime Potential Savings")
                                 Text("$\(totalAmount, specifier: "%.2f")").bold()
                             }
                             Spacer()
@@ -148,70 +141,87 @@ struct ContentView: View {
                         .foregroundStyle(.white)
                     }
                     
-                    // Gráfico de Ahorros
+                    // Savings Chart
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("By Months")
+                        Text("Monthly Breakdown")
                             .font(.title2)
                             .fontWeight(.semibold)
-                      
-                            Chart {
-                                
-                                ForEach(monthlySavings, id: \.month) { data in
-                                    BarMark(
-                                        x: .value("Month", data.month),
-                                        y: .value("Saving", data.amount)
-                                    )
-                                    .annotation {
-                                        Text("$\(data.amount.formatted())")
-                                            .font(.caption).foregroundStyle(.white)
-                                            
-                                    }
-                                    .annotation(position: .bottom, alignment: .center, spacing: 5) {
-                                        Text(abbreviatedMonth(from: data.month))
-                                            .font(.caption).foregroundStyle(.white)
-                                    }
-                                    .foregroundStyle(Color("buttonPrimary"))
-                                    .cornerRadius(5)
+                        Chart {
+                            ForEach(monthlySavings, id: \.month) { data in
+                                BarMark(
+                                    x: .value("Month", data.month),
+                                    y: .value("Saving", data.amount)
+                                )
+                                .annotation {
+                                    Text("$\(data.amount.formatted())")
+                                        .font(.caption)
+                                        .foregroundStyle(.white)
                                 }
+                                .annotation(position: .bottom, alignment: .center, spacing: 5) {
+                                    Text(abbreviatedMonth(from: data.month))
+                                        .font(.caption)
+                                        .foregroundStyle(.white)
+                                }
+                                .foregroundStyle(Color("buttonPrimary"))
+                                .cornerRadius(5)
                             }
-                            .chartXAxis(.hidden)
-                            .chartYAxis(.hidden)
-                           
-                           
-                   
+                        }
+                        .chartXAxis(.hidden)
+                        .chartYAxis(.hidden)
                     }
                     .foregroundStyle(.white)
                     .padding()
                     .background(Color("boxesBg"))
                     .cornerRadius(10)
                     
-                    HStack{
-                        Text("Goals").foregroundStyle(.white)
+                    // Goals Section
+                    HStack {
+                        Text("Savings Goals").foregroundStyle(.white)
                         Spacer()
                         Button(action: {
-                            print("MMG")
-                        }){
-                            Image(systemName: "arrow.forward.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color("buttonPrimary"))
-                                .frame(width: 25, height: 25)
+                            print("View All")
+                        }) {
+                            HStack {
+                                Spacer()
+                                Text("View All")
+                                Image(systemName: "arrow.forward.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                            }
+                            .foregroundStyle(Color("buttonPrimary"))
+                            .frame(maxWidth:.infinity, maxHeight: 25)
                         }
                     }
                     DeckCompletionView()
                     
-                    
+                    // TODAY
+                    HStack {
+                        Text("Potential Purchases Today").foregroundStyle(.white)
+                        Spacer()
+                        Button(action: {}) {
+                            HStack {
+                                Spacer()
+                                Text("View All")
+                                Image(systemName: "arrow.forward.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                            }
+                            .foregroundStyle(Color("buttonPrimary"))
+                            .frame(maxWidth:.infinity, maxHeight: 25)
+                        }
+                    }
                     if !savingsToday.isEmpty {
-                        // TODAY
-                        Text("Today").foregroundStyle(.white)
                         ForEach(savingsToday) { datum in
                             savingTransactionCellView(saving: datum)
                         }
+                    } else {
+                        Text("Add a Saving Entry")
+                            .foregroundStyle(.white)
                     }
                     
                     if !savingsThisMonth.isEmpty {
                         // This Month
-                        Text("This Month").foregroundStyle(.white)
+                        Text("Potential Purchases This Month").foregroundStyle(.white)
                         ForEach(savingsThisMonth) { datum in
                             savingTransactionCellView(saving: datum)
                         }
@@ -223,28 +233,20 @@ struct ContentView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("bg"))
             .navigationTitle("Dashboard")
-            
         }
     }
     
     func abbreviatedMonth(from month: String) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMMM" // Mes completo
+        dateFormatter.dateFormat = "MMMM" // Full month name
         let date = dateFormatter.date(from: month)
         
-        dateFormatter.dateFormat = "MMM" // Abreviatura del mes
+        dateFormatter.dateFormat = "MMM" // Abbreviated month name
         return date != nil ? dateFormatter.string(from: date!) : month
     }
 }
 
-
-
-
-
-
-
 struct DeckCompletionView: View {
-
     @State private var progress: Double = 0.0 // Progress of deck completion
     
     var body: some View {
@@ -253,8 +255,7 @@ struct DeckCompletionView: View {
         let targetProgress = Double(ownedCards) / Double(totalCards) // Target progress based on owned and total cards
         
         return VStack(spacing: 5) {
-            
-            Text("Buy a car")
+            Text("Buy a Car")
                 .foregroundColor(.white)
             ZStack {
                 Circle()
@@ -275,14 +276,11 @@ struct DeckCompletionView: View {
                     )
                     .animation(.easeInOut, value: progress) // Animation for progress change
             }
-            
-         
         }
         .padding()
         .frame(width: 180, height: 150) // Ensure the size matches StatisticView
         .background(Color("boxesBg")) // Background color
         .cornerRadius(16) // Corner radius for rounded corners
-        
         .onAppear {
             withAnimation {
                 progress = targetProgress // Animate progress on appear
@@ -290,14 +288,11 @@ struct DeckCompletionView: View {
         }
         .onChange(of: ownedCards) {
             withAnimation {
-                progress = targetProgress // Update progress on owned cards change
+                progress = targetProgress // Update progress when target changes
             }
         }
     }
 }
-
-
-
 
 
 

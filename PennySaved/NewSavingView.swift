@@ -55,7 +55,7 @@ struct NewSavingView: View {
                 
                 // PICKER PARA LA FECHA
                 VStack(alignment: .leading, spacing: 10) {
-                    DatePicker("Date of Saving", selection: $selectedDate, displayedComponents: .date)
+                    DatePicker("Date of Saving", selection: $selectedDate, in: ...Date(), displayedComponents: .date)
                         .datePickerStyle(.compact)
                         .preferredColorScheme(.dark)
                         .tint(.black)
