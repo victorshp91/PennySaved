@@ -15,6 +15,8 @@ struct PennySavedApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .preferredColorScheme(.dark)
+                .tint(.white)
         }
     }
 }

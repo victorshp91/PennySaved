@@ -7,50 +7,69 @@
 
 import CoreData
 
-struct PersistenceController {
+import CoreData
+
+import SwiftUI
+import CloudKit
+
+
+class PersistenceController {
+    
     static let shared = PersistenceController()
-
-    static var preview: PersistenceController = {
-        let result = PersistenceController(inMemory: true)
-        let viewContext = result.container.viewContext
-        for _ in 0..<10 {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+    
+    let container: NSPersistentCloudKitContainer
+    
+    
+    init() {
+        container = NSPersistentCloudKitContainer(name: "PennySaved")
+        
+        guard let description = container.persistentStoreDescriptions.first else {
+            fatalError("No persistent store descriptions found")
         }
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-        return result
-    }()
-
-    let container: NSPersistentContainer
-
-    init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "PennySaved")
-        if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
-        }
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        
+        // Set CloudKit container options
+        let cloudKitOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.PennySaved")
+        description.cloudKitContainerOptions = cloudKitOptions
+        
+        // Enable remote change notifications
+        description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+        
+        // Enable history tracking and automatic migration
+        description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        description.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
+        
+        container.loadPersistentStores { (storeDescription, error) in
             if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                // Handle the error appropriately
+                print("Unresolved error \(error), \(error.userInfo)")
+                // Consider showing a user-friendly error message and handling recovery
+            } else {
+                // Successfully loaded the store
+                print("Successfully loaded store: \(storeDescription)")
             }
-        })
+        }
+        
+        container.viewContext.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
         container.viewContext.automaticallyMergesChangesFromParent = true
+        
+        // Observe remote change notifications
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRemoteChange(_:)), name: .NSPersistentStoreRemoteChange, object: container.persistentStoreCoordinator)
     }
+    
+    @objc func handleRemoteChange(_ notification: Notification) {
+        print("Received remote change notification")
+        // Implement your logic to handle remote changes, such as fetching updates from CloudKit
+    }
+    
+    func save() {
+            let context = container.viewContext
+            if context.hasChanges {
+                do {
+                    try context.save()
+                } catch {
+                    let nserror = error as NSError
+                    fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                }
+            }
+        }
 }
