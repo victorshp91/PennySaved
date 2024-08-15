@@ -13,14 +13,14 @@ struct savingTransactionCellView: View {
     
     var body: some View {
         HStack {
-            Image(systemName: "handbag.fill")
+            Image(systemName: "\(saving.category?.icon ?? "questionmark")")
                 .padding()
                 .background(.white)
                 .foregroundStyle(.black)
                 .clipShape(Circle())
             
             VStack(alignment: .leading) {
-                Text(saving.name ?? "").bold()
+                Text(saving.name ?? "Not Name").bold()
                 Text("Saved on \(saving.date ?? Date(), style: .date)").foregroundStyle(.secondary)
             }
             .font(.subheadline)

@@ -17,6 +17,9 @@ struct PennySavedApp: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .preferredColorScheme(.dark)
                 .tint(.white)
+                .onAppear {
+                                    CategoryManager.shared.fetchAndUpdateCategories(context: persistenceController.container.viewContext)
+                                }
         }
     }
 }

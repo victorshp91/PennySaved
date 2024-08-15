@@ -107,35 +107,36 @@ struct ContentView: View {
                     // THIS MONTH SAVED & TOTAL SAVINGS
                     HStack {
                         HStack {
-//                            Image(systemName: "m.circle.fill")
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(width: 40)
+                            Image(systemName: "m.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
                             VStack(alignment:.leading) {
-                                Text("This Month Potential Savings")
+                                Text("This Month Potential Savings").font(.caption)
                                 Text("$\(totalAmountThisMonth, specifier: "%.2f")").bold()
                             }
                             Spacer()
                         }
                         .padding()
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, maxHeight: 250)
                         .background(Color("boxesBg"))
                         .cornerRadius(10)
                         .foregroundStyle(.white)
                         
                         HStack {
-//                            Image(systemName: "t.circle.fill")
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(width: 40)
+                            Image(systemName: "l.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
                             VStack(alignment:.leading) {
-                                Text("Lifetime Potential Savings")
+                                Text("Lifetime Potential Savings").font(.caption)
+                                
                                 Text("$\(totalAmount, specifier: "%.2f")").bold()
                             }
                             Spacer()
                         }
                         .padding()
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, maxHeight: 250)
                         .background(Color("boxesBg"))
                         .cornerRadius(10)
                         .foregroundStyle(.white)
@@ -154,8 +155,11 @@ struct ContentView: View {
                                 )
                                 .annotation {
                                     Text("$\(data.amount.formatted())")
+                                        .rotationEffect(.degrees(-90))
                                         .font(.caption)
                                         .foregroundStyle(.white)
+                                        .fixedSize()
+                                        .padding(.vertical)
                                 }
                                 .annotation(position: .bottom, alignment: .center, spacing: 5) {
                                     Text(abbreviatedMonth(from: data.month))
@@ -168,11 +172,14 @@ struct ContentView: View {
                         }
                         .chartXAxis(.hidden)
                         .chartYAxis(.hidden)
+                        
+                        
                     }
                     .foregroundStyle(.white)
                     .padding()
                     .background(Color("boxesBg"))
                     .cornerRadius(10)
+                   
                     
                     // Goals Section
                     HStack {
@@ -192,13 +199,13 @@ struct ContentView: View {
                             .frame(maxWidth:.infinity, maxHeight: 25)
                         }
                     }
-                    DeckCompletionView()
+                    goalStatView()
                     
                     // TODAY
                     HStack {
                         Text("Potential Purchases Today").foregroundStyle(.white)
                         Spacer()
-                        Button(action: {}) {
+                        NavigationLink(destination: savigsListView(saving: Array(savings))) {
                             HStack {
                                 Spacer()
                                 Text("View All")
@@ -209,6 +216,7 @@ struct ContentView: View {
                             .foregroundStyle(Color("buttonPrimary"))
                             .frame(maxWidth:.infinity, maxHeight: 25)
                         }
+                        
                     }
                     if !savingsToday.isEmpty {
                         ForEach(savingsToday) { datum in
@@ -246,7 +254,7 @@ struct ContentView: View {
     }
 }
 
-struct DeckCompletionView: View {
+struct goalStatView: View {
     @State private var progress: Double = 0.0 // Progress of deck completion
     
     var body: some View {

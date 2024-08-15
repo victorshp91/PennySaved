@@ -12,7 +12,9 @@ struct NewSavingView: View {
     @State private var amount = "0"
     @State private var selectedDate: Date = Date()
     @State private var name = ""
-    
+    @State private var note = ""
+    @State private var category: Category?
+    @State private var showCategory = false
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 20) {
@@ -34,20 +36,26 @@ struct NewSavingView: View {
                 
                 // Categoria
                 HStack() {
-                    Image(systemName: "handbag.fill")
+                    Image(systemName: "\(category?.icon ?? "questionmark")")
                         .padding()
                         .background(.white)
                         .foregroundStyle(.black)
                         .clipShape(Circle())
-                    Text("Food")
+                    Text("\(category?.name ?? "Category")")
                     Spacer()
-                    Text("Change")
-                        .font(.headline)
-                        .foregroundStyle(.black)
-                        .padding()
-                       
-                        .background(Color("buttonPrimary"))
-                        .cornerRadius(16)
+                    Button(action: {
+                        showCategory = true
+                    }) {
+                        Text(category != nil ? "Change":"Select")
+                            .font(.headline)
+                            .foregroundStyle(.black)
+                            .padding()
+                        
+                            .background(Color("buttonPrimary"))
+                            .cornerRadius(16)
+                    }.sheet(isPresented: $showCategory) {
+                        CategoryView(category: $category)
+                    }
                 }
                 .padding()
                 .background(Color("boxesBg"))
@@ -72,6 +80,20 @@ struct NewSavingView: View {
                     .foregroundStyle(.white)
            
                 CalculatorView(displayText: $amount)
+                
+                
+                //NOTE
+                
+                Text("Note")
+                    .foregroundStyle(.white)
+                TextEditor(text: $note)
+                    .scrollContentBackground(.hidden) // <- Hide it
+                    .background(.clear) // To see this
+                    .frame(height: 100)
+                    .tint(Color("buttonPrimary"))
+                    .padding()
+                    .background(Color("boxesBg"))
+                    .cornerRadius(16)
                 
                
                 
@@ -114,6 +136,8 @@ struct NewSavingView: View {
         newSaving.amount = amountDouble
         newSaving.date = selectedDate
         newSaving.name = name
+        newSaving.note = note
+        newSaving.category = category
         
         // Guardar en Core Data
         do {
@@ -127,7 +151,7 @@ struct NewSavingView: View {
     
     // VALIDACIÓN DEL FORMULARIO
     private func isFormValid() -> Bool {
-        if let _ = Double(amount), !amount.isEmpty && !name.isEmpty && Double(amount) != 0 {
+        if let _ = Double(amount), !amount.isEmpty && !name.isEmpty && Double(amount) != 0  && category != nil{
             return true
         }
         return false

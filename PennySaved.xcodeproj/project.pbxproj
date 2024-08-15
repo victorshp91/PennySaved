@@ -16,6 +16,9 @@
 		F2768B312C6AEF7700179B04 /* NewSavingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B302C6AEF7700179B04 /* NewSavingView.swift */; };
 		F2768B332C6AF98B00179B04 /* savingTransactionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B322C6AF98B00179B04 /* savingTransactionCellView.swift */; };
 		F2768B352C6B0A2600179B04 /* CalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B342C6B0A2600179B04 /* CalculatorView.swift */; };
+		F2768B372C6B875400179B04 /* savigsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B362C6B875400179B04 /* savigsListView.swift */; };
+		F2768B392C6B94C600179B04 /* CategoriesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B382C6B94C600179B04 /* CategoriesManager.swift */; };
+		F2768B3B2C6B966000179B04 /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B3A2C6B966000179B04 /* CategoriesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +34,9 @@
 		F2768B302C6AEF7700179B04 /* NewSavingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSavingView.swift; sourceTree = "<group>"; };
 		F2768B322C6AF98B00179B04 /* savingTransactionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = savingTransactionCellView.swift; sourceTree = "<group>"; };
 		F2768B342C6B0A2600179B04 /* CalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorView.swift; sourceTree = "<group>"; };
+		F2768B362C6B875400179B04 /* savigsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = savigsListView.swift; sourceTree = "<group>"; };
+		F2768B382C6B94C600179B04 /* CategoriesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesManager.swift; sourceTree = "<group>"; };
+		F2768B3A2C6B966000179B04 /* CategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,12 +73,15 @@
 				F2768B1B2C6ADEEE00179B04 /* PennySavedApp.swift */,
 				F2768B1D2C6ADEEE00179B04 /* Persistence.swift */,
 				F2768B222C6ADEEE00179B04 /* ContentView.swift */,
+				F2768B362C6B875400179B04 /* savigsListView.swift */,
 				F2768B342C6B0A2600179B04 /* CalculatorView.swift */,
 				F2768B322C6AF98B00179B04 /* savingTransactionCellView.swift */,
 				F2768B302C6AEF7700179B04 /* NewSavingView.swift */,
 				F2768B242C6ADEEF00179B04 /* Assets.xcassets */,
 				F2768B262C6ADEEF00179B04 /* PennySaved.entitlements */,
 				F2768B1F2C6ADEEE00179B04 /* PennySaved.xcdatamodeld */,
+				F2768B382C6B94C600179B04 /* CategoriesManager.swift */,
+				F2768B3A2C6B966000179B04 /* CategoriesView.swift */,
 				F2768B272C6ADEEF00179B04 /* Preview Content */,
 			);
 			path = PennySaved;
@@ -158,10 +167,13 @@
 			files = (
 				F2768B312C6AEF7700179B04 /* NewSavingView.swift in Sources */,
 				F2768B352C6B0A2600179B04 /* CalculatorView.swift in Sources */,
+				F2768B392C6B94C600179B04 /* CategoriesManager.swift in Sources */,
 				F2768B1C2C6ADEEE00179B04 /* PennySavedApp.swift in Sources */,
+				F2768B372C6B875400179B04 /* savigsListView.swift in Sources */,
 				F2768B212C6ADEEE00179B04 /* PennySaved.xcdatamodeld in Sources */,
 				F2768B232C6ADEEE00179B04 /* ContentView.swift in Sources */,
 				F2768B1E2C6ADEEE00179B04 /* Persistence.swift in Sources */,
+				F2768B3B2C6B966000179B04 /* CategoriesView.swift in Sources */,
 				F2768B332C6AF98B00179B04 /* savingTransactionCellView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,6 +309,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PennySaved/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Almost Savings";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -336,6 +349,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PennySaved/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Almost Savings";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
