@@ -9,8 +9,10 @@
     </entity>
     <entity name="Goals" representedClassName="Goals" syncable="YES" codeGenerationType="class">
         <attribute name="currentAmount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="dueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="note" optional="YES" attributeType="String"/>
         <attribute name="targetAmount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <relationship name="saving" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Saving" inverseName="goal" inverseEntity="Saving"/>
     </entity>

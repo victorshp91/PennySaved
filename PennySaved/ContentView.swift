@@ -10,12 +10,13 @@ import CoreData
 import Charts
 
 struct ContentView: View {
+    
+    @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
     @FetchRequest(
         entity: Saving.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Saving.date, ascending: false)]
     ) var savings: FetchedResults<Saving>
     
-    @Environment(\.managedObjectContext) private var viewContext
 
     var today: Date {
         Calendar.current.startOfDay(for: Date())
@@ -72,37 +73,40 @@ struct ContentView: View {
         
         return monthlyData
     }
-
+    
+    @State private var needsRefresh: Bool = false
     var body: some View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 20) {
                     // PROFILE HEADER
-                    HStack {
-                        Image("profile")
-                            .resizable()
-                            .clipShape(Circle())
-                            .scaledToFill()
-                            .frame(width: 65, height: 65)
-                        VStack(alignment:.leading) {
-                            Text("Welcome, Arina").bold()
-                            Text("Track your potential savings with PennySaved.").foregroundStyle(.secondary)
-                        }
-                        .font(.subheadline)
-                        Spacer()
-                        NavigationLink(destination: NewSavingView()) {
-                            Image(systemName: "plus")
-                                .padding()
-                                .background(Color("buttonPrimary"))
-                                .foregroundStyle(.black)
-                                .clipShape(Circle())
-                        }
+                    ScrollView(.horizontal) {
+                        HStack {
+                            NavigationLink(destination: NewSavingView()) {
+                                HStack{
+                                    Text("New Almost Saving")
+                                    Image(systemName: "plus")
+                                    
+                                }.padding()
+                                    .background(Color("buttonPrimary"))
+                                    .foregroundStyle(.black)
+                                    .cornerRadius(50)
+                                   
+                            }
+                            NavigationLink(destination: NewGoalView()) {
+                                HStack{
+                                    Text("New Goal")
+                                    Image(systemName: "plus")
+                                    
+                                }.padding()
+                                    .background(Color("buttonPrimary"))
+                                    .foregroundStyle(.black)
+                                    .cornerRadius(50)
+                            }
+                        } .font(.headline).bold()
+                            .padding(.horizontal, 15)
                     }
-                    .padding(10)
-                    .frame(maxWidth: .infinity)
-                    .background(Color("boxesBg"))
-                    .cornerRadius(50)
-                    .foregroundStyle(.white)
+                   
                     
                     // THIS MONTH SAVED & TOTAL SAVINGS
                     HStack {
@@ -140,13 +144,18 @@ struct ContentView: View {
                         .background(Color("boxesBg"))
                         .cornerRadius(10)
                         .foregroundStyle(.white)
-                    }
+                    }.padding(.horizontal, 15)
                     
                     // Savings Chart
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Monthly Breakdown")
-                            .font(.title2)
-                            .fontWeight(.semibold)
+                        VStack(alignment: .leading, spacing: .zero){
+                            Text("Monthly Breakdown")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                            Text("Current Year")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
                         Chart {
                             ForEach(monthlySavings, id: \.month) { data in
                                 BarMark(
@@ -157,6 +166,7 @@ struct ContentView: View {
                                     Text("$\(data.amount.formatted())")
                                         .rotationEffect(.degrees(-90))
                                         .font(.caption)
+                                        .frame(maxHeight: .infinity)
                                         .foregroundStyle(.white)
                                         .fixedSize()
                                         .padding(.vertical)
@@ -179,15 +189,16 @@ struct ContentView: View {
                     .padding()
                     .background(Color("boxesBg"))
                     .cornerRadius(10)
+                    .padding(.horizontal, 5)
+              
                    
                     
                     // Goals Section
+                    
                     HStack {
                         Text("Savings Goals").foregroundStyle(.white)
                         Spacer()
-                        Button(action: {
-                            print("View All")
-                        }) {
+                        NavigationLink(destination: GoalsListView(isForSelect: false, selectedGoal: Binding.constant(nil))) {
                             HStack {
                                 Spacer()
                                 Text("View All")
@@ -198,12 +209,28 @@ struct ContentView: View {
                             .foregroundStyle(Color("buttonPrimary"))
                             .frame(maxWidth:.infinity, maxHeight: 25)
                         }
+                        
+                    }.padding(.horizontal, 15)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack{
+                            if !goalsVm.goals.isEmpty {
+                                ForEach(goalsVm.goals) {goal in
+                                    
+                                    GoalCellView(goal: goal)
+                                }
+                            } else {
+                                ContentUnavailableView("No goals found", systemImage: "figure.walk.circle.fill")
+                                
+                            }
+                        }  .padding(.horizontal, 15)
                     }
-                    goalStatView()
+
+                   
                     
                     // TODAY
                     HStack {
-                        Text("Potential Purchases Today").foregroundStyle(.white)
+                        Text("Today").foregroundStyle(.white)
                         Spacer()
                         NavigationLink(destination: savigsListView(saving: Array(savings))) {
                             HStack {
@@ -217,30 +244,40 @@ struct ContentView: View {
                             .frame(maxWidth:.infinity, maxHeight: 25)
                         }
                         
-                    }
+                    }.padding(.horizontal, 15)
                     if !savingsToday.isEmpty {
                         ForEach(savingsToday) { datum in
                             savingTransactionCellView(saving: datum)
+                                .padding(.horizontal, 15)
                         }
                     } else {
-                        Text("Add a Saving Entry")
-                            .foregroundStyle(.white)
+                        ContentUnavailableView("No savings found Today", systemImage: "dollarsign.circle.fill")
                     }
                     
-                    if !savingsThisMonth.isEmpty {
+                   
                         // This Month
-                        Text("Potential Purchases This Month").foregroundStyle(.white)
-                        ForEach(savingsThisMonth) { datum in
-                            savingTransactionCellView(saving: datum)
-                        }
-                    }
+                        VStack(alignment: .leading){
+                            Text("This Month").foregroundStyle(.white)
+                            if !savingsThisMonth.isEmpty {
+                                ForEach(savingsThisMonth) { datum in
+                                    savingTransactionCellView(saving: datum)
+                                        
+                                }
+                            } else {
+                                
+                                ContentUnavailableView("No savings found this month", systemImage: "dollarsign.circle.fill")
+                                
+                            }
+                        }.padding(.horizontal, 15)
+                    
                 }
                 Spacer()
             }
-            .padding(.horizontal, 15)
+            
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("bg"))
             .navigationTitle("Dashboard")
+            
         }
     }
     
@@ -254,58 +291,13 @@ struct ContentView: View {
     }
 }
 
-struct goalStatView: View {
-    @State private var progress: Double = 0.0 // Progress of deck completion
-    
-    var body: some View {
-        let ownedCards = 25 // Number of owned cards in the set
-        let totalCards = 100 // Total number of cards in the set
-        let targetProgress = Double(ownedCards) / Double(totalCards) // Target progress based on owned and total cards
-        
-        return VStack(spacing: 5) {
-            Text("Buy a Car")
-                .foregroundColor(.white)
-            ZStack {
-                Circle()
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 10) // Background circle
-                    .frame(width: 80, height: 80)
-                
-                Circle()
-                    .trim(from: 0.0, to: CGFloat(min(progress, 1.0)))
-                    .stroke(Color("buttonPrimary"), lineWidth: 10) // Progress circle
-                    .frame(width: 80, height: 80)
-                    .rotationEffect(Angle(degrees: -90)) // Rotate circle to start from top
-                    .padding()
-                    .overlay(
-                        Text("\(Int(progress * 100))%") // Display progress percentage
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                    )
-                    .animation(.easeInOut, value: progress) // Animation for progress change
-            }
-        }
-        .padding()
-        .frame(width: 180, height: 150) // Ensure the size matches StatisticView
-        .background(Color("boxesBg")) // Background color
-        .cornerRadius(16) // Corner radius for rounded corners
-        .onAppear {
-            withAnimation {
-                progress = targetProgress // Animate progress on appear
-            }
-        }
-        .onChange(of: ownedCards) {
-            withAnimation {
-                progress = targetProgress // Update progress when target changes
-            }
-        }
-    }
-}
+
 
 
 
 #Preview {
     ContentView()
+        .preferredColorScheme(.dark)
 }
 
 

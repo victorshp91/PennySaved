@@ -19,6 +19,11 @@
 		F2768B372C6B875400179B04 /* savigsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B362C6B875400179B04 /* savigsListView.swift */; };
 		F2768B392C6B94C600179B04 /* CategoriesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B382C6B94C600179B04 /* CategoriesManager.swift */; };
 		F2768B3B2C6B966000179B04 /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B3A2C6B966000179B04 /* CategoriesView.swift */; };
+		F2768B3F2C6F7D4000179B04 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B3E2C6F7D4000179B04 /* SearchBarView.swift */; };
+		F2768B412C6F81FE00179B04 /* GoalCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B402C6F81FE00179B04 /* GoalCellView.swift */; };
+		F2768B432C6F876D00179B04 /* NewGoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B422C6F876D00179B04 /* NewGoalView.swift */; };
+		F2768B452C704A5900179B04 /* GoalsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B442C704A5900179B04 /* GoalsListView.swift */; };
+		F2768B472C7051E400179B04 /* GoalsVm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B462C7051E400179B04 /* GoalsVm.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +42,11 @@
 		F2768B362C6B875400179B04 /* savigsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = savigsListView.swift; sourceTree = "<group>"; };
 		F2768B382C6B94C600179B04 /* CategoriesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesManager.swift; sourceTree = "<group>"; };
 		F2768B3A2C6B966000179B04 /* CategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
+		F2768B3E2C6F7D4000179B04 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
+		F2768B402C6F81FE00179B04 /* GoalCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCellView.swift; sourceTree = "<group>"; };
+		F2768B422C6F876D00179B04 /* NewGoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGoalView.swift; sourceTree = "<group>"; };
+		F2768B442C704A5900179B04 /* GoalsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsListView.swift; sourceTree = "<group>"; };
+		F2768B462C7051E400179B04 /* GoalsVm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsVm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,10 +83,15 @@
 				F2768B1B2C6ADEEE00179B04 /* PennySavedApp.swift */,
 				F2768B1D2C6ADEEE00179B04 /* Persistence.swift */,
 				F2768B222C6ADEEE00179B04 /* ContentView.swift */,
+				F2768B462C7051E400179B04 /* GoalsVm.swift */,
+				F2768B422C6F876D00179B04 /* NewGoalView.swift */,
+				F2768B302C6AEF7700179B04 /* NewSavingView.swift */,
+				F2768B442C704A5900179B04 /* GoalsListView.swift */,
 				F2768B362C6B875400179B04 /* savigsListView.swift */,
+				F2768B402C6F81FE00179B04 /* GoalCellView.swift */,
 				F2768B342C6B0A2600179B04 /* CalculatorView.swift */,
 				F2768B322C6AF98B00179B04 /* savingTransactionCellView.swift */,
-				F2768B302C6AEF7700179B04 /* NewSavingView.swift */,
+				F2768B3E2C6F7D4000179B04 /* SearchBarView.swift */,
 				F2768B242C6ADEEF00179B04 /* Assets.xcassets */,
 				F2768B262C6ADEEF00179B04 /* PennySaved.entitlements */,
 				F2768B1F2C6ADEEE00179B04 /* PennySaved.xcdatamodeld */,
@@ -167,14 +182,19 @@
 			files = (
 				F2768B312C6AEF7700179B04 /* NewSavingView.swift in Sources */,
 				F2768B352C6B0A2600179B04 /* CalculatorView.swift in Sources */,
+				F2768B432C6F876D00179B04 /* NewGoalView.swift in Sources */,
+				F2768B472C7051E400179B04 /* GoalsVm.swift in Sources */,
 				F2768B392C6B94C600179B04 /* CategoriesManager.swift in Sources */,
 				F2768B1C2C6ADEEE00179B04 /* PennySavedApp.swift in Sources */,
 				F2768B372C6B875400179B04 /* savigsListView.swift in Sources */,
 				F2768B212C6ADEEE00179B04 /* PennySaved.xcdatamodeld in Sources */,
 				F2768B232C6ADEEE00179B04 /* ContentView.swift in Sources */,
+				F2768B3F2C6F7D4000179B04 /* SearchBarView.swift in Sources */,
 				F2768B1E2C6ADEEE00179B04 /* Persistence.swift in Sources */,
 				F2768B3B2C6B966000179B04 /* CategoriesView.swift in Sources */,
 				F2768B332C6AF98B00179B04 /* savingTransactionCellView.swift in Sources */,
+				F2768B412C6F81FE00179B04 /* GoalCellView.swift in Sources */,
+				F2768B452C704A5900179B04 /* GoalsListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

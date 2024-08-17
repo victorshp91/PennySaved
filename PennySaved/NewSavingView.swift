@@ -14,8 +14,15 @@ struct NewSavingView: View {
     @State private var name = ""
     @State private var note = ""
     @State private var category: Category?
+    @State  var selectedGoal: Goals?
     @State private var showCategory = false
+    @State private var showGoals = false
+    // EDIT
+    @State  var isForEdit = false
+    @State  var savingForEdit: Saving?
+    
     var body: some View {
+        
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 20) {
                 // NOMBRE DEL ARTÍCULO
@@ -61,6 +68,38 @@ struct NewSavingView: View {
                 .background(Color("boxesBg"))
                 .cornerRadius(16)
                 
+                // GOAL
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack{
+                        VStack(alignment: .leading){
+                            Text("Apply to a Goal").bold()
+                            Text("Optional").font(.footnote).foregroundStyle(.secondary)
+                            Spacer()
+                            Text("\(selectedGoal?.name ?? "None")")
+                        }
+                        Spacer()
+                        Button(action: {
+                            showGoals = true
+                        }) {
+                            Text(selectedGoal != nil ? "Change":"Select")
+                                .font(.headline)
+                                .foregroundStyle(.black)
+                                .padding()
+                            
+                                .background(Color("buttonPrimary"))
+                                .cornerRadius(16)
+                        }.sheet(isPresented: $showGoals) {
+                            GoalsListView(isForSelect: true, selectedGoal: $selectedGoal)
+                           
+                        }
+                        
+                    }
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color("boxesBg"))
+                .cornerRadius(16)
+                
                 // PICKER PARA LA FECHA
                 VStack(alignment: .leading, spacing: 10) {
                     DatePicker("Date of Saving", selection: $selectedDate, in: ...Date(), displayedComponents: .date)
@@ -99,8 +138,12 @@ struct NewSavingView: View {
                 
                 // BOTÓN "GUARDAR"
                 Button(action: {
-                    // Acción para guardar el ahorro
-                    saveSaving()
+                    if isForEdit {
+                        updateSaving()
+                    }else {
+                        // Acción para guardar el ahorro
+                        saveSaving()
+                    }
                 }) {
                     Text("Save Saving")
                         .font(.headline)
@@ -117,6 +160,17 @@ struct NewSavingView: View {
             .navigationTitle("New Saving")
             .navigationBarTitleDisplayMode(.inline)
             .padding(15)
+            .onAppear(perform: {
+            
+                if isForEdit {
+                    name = savingForEdit?.name ?? ""
+                    note = savingForEdit?.note ?? ""
+                    selectedDate = savingForEdit?.date ?? Date()
+                    amount = String(savingForEdit?.amount ?? 0)
+                    category = savingForEdit?.category
+                    selectedGoal = savingForEdit?.goal
+                }
+            })
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color("bg"))
@@ -138,14 +192,48 @@ struct NewSavingView: View {
         newSaving.name = name
         newSaving.note = note
         newSaving.category = category
+        if let goal = self.selectedGoal {
+            newSaving.goal = goal
+        }
+        
         
         // Guardar en Core Data
         do {
-            try PersistenceController.shared.container.viewContext.save()
+            try PersistenceController.shared.save()
             print("Saving saved: \(amountDouble) on \(selectedDate)")
             self.presentationMode.wrappedValue.dismiss()
         } catch {
             print("Error saving the saving: \(error.localizedDescription)")
+        }
+    }
+    
+    private func updateSaving() {
+        if let saving = savingForEdit {
+            
+            // Convertir la cantidad a un tipo Double
+            guard let amountDouble = Double(amount) else {
+                print("Invalid amount")
+                return
+            }
+            
+            
+            
+            saving.name = name
+            saving.amount = amountDouble
+            saving.date = selectedDate
+            saving.note = note
+            saving.category = category
+            
+            if let goal = self.selectedGoal {
+                saving.goal = goal
+            }
+            
+            do {
+                try PersistenceController.shared.save()
+                self.presentationMode.wrappedValue.dismiss()
+            }catch {
+                print("Error saving the saving: \(error.localizedDescription)")
+            }
         }
     }
     

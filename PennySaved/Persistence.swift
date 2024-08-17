@@ -61,7 +61,7 @@ class PersistenceController {
         // Implement your logic to handle remote changes, such as fetching updates from CloudKit
     }
     
-    func save() {
+    func save() throws {
             let context = container.viewContext
             if context.hasChanges {
                 do {

@@ -15,28 +15,44 @@ struct CategoryView: View {
     ) var categories: FetchedResults<Category>
 
     @Binding var category: Category?
+    @Environment(\.presentationMode) var presentationMode
+    @State var searchText = ""
     
-    var body: some View {
-        ScrollView {
+    // Filter the cards based on the search text
+    private var searchFilter: [Category] {
         
-            LazyVStack(alignment: .leading, spacing: 16) {
-                ForEach(categories, id: \.self) { category in
+        let filteredCategories = categories.filter { category in
+            searchText.isEmpty || category.name?.localizedCaseInsensitiveContains(searchText) == true
+        }
+        
+        return filteredCategories
+    }
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            
+            SearchBarView(searchingText: $searchText, searchBoxDefaultText: "Category Name")
+        
+            LazyVGrid(columns:  [ GridItem(.flexible(), spacing: 5),
+                                  GridItem(.flexible(), spacing: 5)]) {
+                ForEach(searchFilter, id: \.self) { category in
                     Button(action: {
                         self.category = category
+                        self.presentationMode.wrappedValue.dismiss()
                     }) {
                         HStack {
                             Image(systemName: category.icon ?? "questionmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 40, height: 40)
-                                .foregroundColor(Color.black)
+                                .frame(width: 30, height: 30)
+                                .foregroundColor(Color.white)
                             
                             Text(category.name ?? "Unknown Category")
+                                .multilineTextAlignment(.leading)
                                 .font(.headline)
-                                .foregroundColor(.black)
-                        }
+                                .foregroundColor(.white)
+                        }.frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding()
-                        .background(Color.white)
+                        .background(Color("boxesBg"))
                         .cornerRadius(8)
                     }
                 }
@@ -47,31 +63,31 @@ struct CategoryView: View {
     }
 }
 
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
-        }
-
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue: Double(b) / 255,
-            opacity: Double(a) / 255
-        )
-    }
-}
+//extension Color {
+//    init(hex: String) {
+//        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+//        var int: UInt64 = 0
+//        Scanner(string: hex).scanHexInt64(&int)
+//        let a, r, g, b: UInt64
+//        switch hex.count {
+//        case 3: // RGB (12-bit)
+//            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+//        case 6: // RGB (24-bit)
+//            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+//        case 8: // ARGB (32-bit)
+//            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+//        default:
+//            (a, r, g, b) = (255, 0, 0, 0)
+//        }
+//
+//        self.init(
+//            .sRGB,
+//            red: Double(r) / 255,
+//            green: Double(g) / 255,
+//            blue: Double(b) / 255,
+//            opacity: Double(a) / 255
+//        )
+//    }
+//}
 
 

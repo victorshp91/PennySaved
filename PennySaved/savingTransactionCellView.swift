@@ -9,19 +9,26 @@ import SwiftUI
 
 struct savingTransactionCellView: View {
 
-    var saving: Saving
+    @StateObject var saving: Saving
     
     var body: some View {
         HStack {
             Image(systemName: "\(saving.category?.icon ?? "questionmark")")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 25, height: 25)
                 .padding()
                 .background(.white)
                 .foregroundStyle(.black)
                 .clipShape(Circle())
-            
+          
             VStack(alignment: .leading) {
                 Text(saving.name ?? "Not Name").bold()
                 Text("Saved on \(saving.date ?? Date(), style: .date)").foregroundStyle(.secondary)
+                NavigationLink(destination: NewSavingView(isForEdit: true, savingForEdit: saving)) {
+                    Text("Details")
+                        .foregroundStyle(Color("buttonPrimary"))
+                }
             }
             .font(.subheadline)
             
