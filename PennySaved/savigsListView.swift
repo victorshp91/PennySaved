@@ -24,7 +24,7 @@ struct savigsListView: View {
             entity: Category.entity(),
             sortDescriptors: [NSSortDescriptor(keyPath: \Category.name, ascending: true)]
         ) var categories: FetchedResults<Category>
-    
+    var goal: Goals? // SI ES PARA VER  LA LISTA PARA UN GOAL
     @State private var selectedCategory: Category? // Category selection
     var saving: [Saving]
     @State private var selectedMonth: Int = 0
@@ -64,6 +64,10 @@ struct savigsListView: View {
                    if let category = selectedCategory {
                        sortedSavings = sortedSavings.filter { $0.category == category }
                    }
+            
+             sortedSavings = sortedSavings.filter { saving in
+                searchText.isEmpty || saving.name?.localizedCaseInsensitiveContains(searchText) == true
+            }
                     
                     return sortedSavings
         }
@@ -71,79 +75,95 @@ struct savigsListView: View {
     
     
     @State private var selectedSortOption: SortOption = .dateDesc
+    @State private var searchText = ""
+    
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 10) {
-                ScrollView(.horizontal, showsIndicators: false ) {
-                    HStack {
-                        Spacer()
-                        Picker("Sort by", selection: $selectedSortOption) {
-                            ForEach(0..<SortOption.allCases.count, id: \.self) { index in
-                                let option = SortOption.allCases[index]
-                                Text(option.rawValue).tag(option)
-                                
-                                // Add a divider every two options
-                                if index % 2 == 1 && index < SortOption.allCases.count - 1 {
-                                    Divider()
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 10) {
+                    
+                    SearchBarView(searchingText: $searchText, searchBoxDefaultText: "Saving Name")
+                        .padding(.horizontal,15)
+                       
+                    ScrollView(.horizontal, showsIndicators: false ) {
+                        
+                        
+                        HStack {
+                           
+                            Picker("Sort by", selection: $selectedSortOption) {
+                                ForEach(0..<SortOption.allCases.count, id: \.self) { index in
+                                    let option = SortOption.allCases[index]
+                                    Text(option.rawValue).tag(option)
+                                    
+                                    // Add a divider every two options
+                                    if index % 2 == 1 && index < SortOption.allCases.count - 1 {
+                                        Divider()
+                                    }
                                 }
                             }
-                        }
-                        .pickerStyle(.menu)
-           
-                        .padding(5)
-                        .background(Color("boxesBg"))
-                        .cornerRadius(16)
-                        
-                        // Picker for Selecting Month
-                        Picker("Select Month", selection: $selectedMonth) {
-                            ForEach(0..<months.count, id: \.self) { index in
-                                Text(months[index]).tag(index)
-                                
+                            .pickerStyle(.menu)
+                            
+                            .padding(5)
+                            .background(Color("boxesBg"))
+                            .cornerRadius(16)
+                            
+                            // Picker for Selecting Month
+                            Picker("Select Month", selection: $selectedMonth) {
+                                ForEach(0..<months.count, id: \.self) { index in
+                                    Text(months[index]).tag(index)
+                                    
+                                }
                             }
-                        }
-                      
-                        .pickerStyle(.menu)
-                        .padding(5)
-                        .background(Color("boxesBg"))
-                        .cornerRadius(16)
-                        
-                        // Picker for Selecting Category
-                        Picker("Select Category", selection: $selectedCategory) {
-                            Text("All Categories").tag(Category?.none) // Optional, to show all categories
-                            ForEach(categories) { category in
-                                HStack(spacing: 10) {
-                                    Image(systemName: "\(category.icon ?? "questionmark")")
-                                    Text(category.name ?? "Unknown").tag(category as Category?)
-                                }.tag(category as Category?)
+                            
+                            .pickerStyle(.menu)
+                            .padding(5)
+                            .background(Color("boxesBg"))
+                            .cornerRadius(16)
+                            
+                            // Picker for Selecting Category
+                            Picker("Select Category", selection: $selectedCategory) {
+                                Text("All Categories").tag(Category?.none) // Optional, to show all categories
+                                ForEach(categories) { category in
+                                    HStack(spacing: 10) {
+                                        Image(systemName: "\(category.icon ?? "questionmark")")
+                                        Text(category.name ?? "Unknown").tag(category as Category?)
+                                    }.tag(category as Category?)
+                                }
                             }
-                        }
-                   
-                        .pickerStyle(.menu)
-                        .padding(5)
-                        .background(Color("boxesBg"))
-                        .cornerRadius(16)
-                        
-                        
-                        
-                    } .padding(.horizontal, 15)
-                }
-                              
-                
-                if sortedSavings().isEmpty {
-                    ContentUnavailableView("No saving found matching your search", systemImage: "magnifyingglass.circle.fill")
-                } else {
-                    
-                    ForEach(sortedSavings()) { datum in
-                        savingTransactionCellView(saving: datum)
-                            .padding(.horizontal, 15)
+                            
+                            .pickerStyle(.menu)
+                            .padding(5)
+                            .background(Color("boxesBg"))
+                            .cornerRadius(16)
+                            
+                            
+                            
+                        } .padding(.horizontal,15)
                     }
-                }
-                
-            }.navigationTitle("Savings")
-                .navigationBarTitleDisplayMode(.inline)
-               
-        }.frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color("bg"))
+                    
+                    
+                    
+                    
+                    if sortedSavings().isEmpty {
+                        ContentUnavailableView("No saving found matching your search", systemImage: "magnifyingglass.circle.fill")
+                    } else {
+                        if goal != nil {
+                            Text("Almost Savings for Goal \(goal?.name ?? "NO DATA")")
+                        }
+                        ForEach(sortedSavings()) { datum in
+                            savingTransactionCellView(saving: datum)
+                                .padding(.horizontal, 15)
+                               
+                            
+                        }
+                    }
+                    
+                }.navigationTitle("Savings")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .padding(.top)
+            }.frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color("bg"))
+        }
     }
 }
 

@@ -22,14 +22,16 @@ class GoalsVm: ObservableObject {
         
     }
     func fetchGols() {
-        
         let request: NSFetchRequest<Goals> = Goals.fetchRequest()
-       
+        
+        // Sort the results by date in ascending order
+        let sortDescriptor = NSSortDescriptor(key: "date", ascending: false)
+        request.sortDescriptors = [sortDescriptor]
         
         do {
             goals = try viewContext.fetch(request)
         } catch {
-            print("Failed to fetch decks: \(error.localizedDescription)")
+            print("Failed to fetch goals: \(error.localizedDescription)")
         }
     }
     

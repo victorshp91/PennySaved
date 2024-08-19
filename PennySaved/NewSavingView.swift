@@ -9,6 +9,8 @@ import SwiftUI
 
 struct NewSavingView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
+    @EnvironmentObject var savingVm: SavingsVm  // Access the GoalsVm instance
     @State private var amount = "0"
     @State private var selectedDate: Date = Date()
     @State private var name = ""
@@ -20,6 +22,9 @@ struct NewSavingView: View {
     // EDIT
     @State  var isForEdit = false
     @State  var savingForEdit: Saving?
+    
+    
+    @State private var showDeleteAlert = false
     
     var body: some View {
         
@@ -157,7 +162,7 @@ struct NewSavingView: View {
                
                 
             }
-            .navigationTitle("New Saving")
+            .navigationTitle(isForEdit ? "Edit Saving":"New Saving")
             .navigationBarTitleDisplayMode(.inline)
             .padding(15)
             .onAppear(perform: {
@@ -174,7 +179,47 @@ struct NewSavingView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color("bg"))
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                if isForEdit {
+                    Button("Delete") {
+                        showDeleteAlert = true       // Trigger the alert
+                       
+                        
+                    }.foregroundStyle(.red)
+                        .alert(isPresented: $showDeleteAlert) {
+                            Alert(
+                                title: Text("Delete Saving"),
+                                message: Text("Are you sure you want to delete this saving?"),
+                                primaryButton: .destructive(Text("Delete")) {
+                                    if let saving = savingForEdit {
+                                        deleteSaving(saving: saving)
+                                    }
+                                },
+                                secondaryButton: .cancel()
+                            )
+                        }
+                }
+            }
+        }
     }
+    
+    private func deleteSaving(saving: Saving) {
+        let context = PersistenceController.shared.container.viewContext
+
+        context.delete(saving) // Delete the Saving from the context
+        
+        // Save the context to persist the deletion
+        do {
+            try PersistenceController.shared.save()
+            savingVm.fetchSavings() // PARA ACUTALIZAR EL ARRAY CON LOS SAVINGS
+            self.presentationMode.wrappedValue.dismiss()
+            print("Saving deleted successfully.")
+        } catch {
+            print("Failed to delete saving: \(error.localizedDescription)")
+        }
+    }
+
     
     // GUARDAR EN COREDATA
     private func saveSaving() {
@@ -201,6 +246,8 @@ struct NewSavingView: View {
         do {
             try PersistenceController.shared.save()
             print("Saving saved: \(amountDouble) on \(selectedDate)")
+            savingVm.fetchSavings() // PARA ACUTALIZAR EL ARRAY CON LOS SAVINGS
+
             self.presentationMode.wrappedValue.dismiss()
         } catch {
             print("Error saving the saving: \(error.localizedDescription)")
@@ -226,10 +273,15 @@ struct NewSavingView: View {
             
             if let goal = self.selectedGoal {
                 saving.goal = goal
+                goalsVm.fetchGols()
+            } else {
+                saving.goal = nil
             }
             
             do {
                 try PersistenceController.shared.save()
+                savingVm.fetchSavings() // PARA ACUTALIZAR EL ARRAY CON LOS SAVINGS
+
                 self.presentationMode.wrappedValue.dismiss()
             }catch {
                 print("Error saving the saving: \(error.localizedDescription)")

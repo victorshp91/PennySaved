@@ -11,13 +11,12 @@ struct GoalCellView: View {
     @State private var progress: Double = 0.0 // Progress of deck completion
     @State var goal: Goals
     @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
+    
     var targetProgress: Double {
         return Double(goalsVm.totalSavings(for: goal)) / Double(goal.targetAmount)
     } // Target progress based on owned and total cards
     var body: some View {
-     
-       
-        
+  
         return HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 10){
                 Text("\(goal.name ?? "NO DATA")")
@@ -28,10 +27,14 @@ struct GoalCellView: View {
                 Text("Date Started\n\(goal.date ?? Date(), style: .date)").font(.footnote)
                     .multilineTextAlignment(.leading)
                    
+                
                 NavigationLink(destination: NewGoalView(isForEdit: true, goalForEdit: goal)) {
+                    
                     Text("Details")
                         .foregroundStyle(Color("buttonPrimary"))
                 }
+               
+              
             }
             Spacer()
             ZStack {

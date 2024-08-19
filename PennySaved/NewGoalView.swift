@@ -9,13 +9,13 @@ import SwiftUI
 
 struct NewGoalView: View {
     @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
-
+    @EnvironmentObject var savingsVm: SavingsVm  // Access the GoalsVm instance
     @Environment(\.presentationMode) var presentationMode
     // EDIT
     @State  var isForEdit = false
     @State  var goalForEdit: Goals?
     
-   
+    @State var showAlmostSavings = false
     @State private var name = ""
     @State private var note = ""
     @State private var targetAmount = "0"
@@ -53,16 +53,34 @@ struct NewGoalView: View {
                 .background(Color("boxesBg"))
                 .cornerRadius(16)
                 // CURRENT AMOUNT SI ES PARA EDIT
-                if let goal = goalForEdit {
+                if isForEdit {
                     HStack{
-                        Text("Current Amount")
-                        Spacer()
-                        Text("\(currentAmount, specifier: "%.2f")")
+                        VStack(alignment:.leading, spacing: 10){
+                            HStack{
+                                Text("Current Amount")
+                                Spacer()
+                                Text("\(goalsVm.totalSavings(for: goalForEdit ?? Goals()), specifier: "%.2f")")
+                            }
+                            if isForEdit {
+                                Button(action: {
+                                    showAlmostSavings = true
+                                }){
+                                    Text("See Almost Savings on this Goal")
+                                        .foregroundStyle(Color("buttonPrimary"))
+                                }.sheet(isPresented: $showAlmostSavings) {
+                                    savigsListView(goal:goalForEdit, saving: savingsVm.savings.filter { $0.goal == goalForEdit })
+                                        .presentationDetents([.medium,.large])
+                                    
+                                }
+                            }
+                        }
                     }.padding()
                         .frame(maxWidth: .infinity)
                         .background(Color("boxesBg"))
                         .cornerRadius(16)
                 }
+                
+                
                 
                 // MONTO
                 Text("Target Amount")
@@ -90,7 +108,7 @@ struct NewGoalView: View {
                 // BOTÓN "GUARDAR"
                 Button(action: {
                     if isForEdit {
-                        saveGoal()
+                        updateGoal()
                     }else {
                         // Acción para guardar el ahorro
                         saveGoal()
@@ -106,7 +124,7 @@ struct NewGoalView: View {
                 }
                 .disabled(!isFormValid())
                 
-            } .navigationTitle("New Saving")
+            } .navigationTitle(isForEdit ? "Edit Goal":"New Goal")
                 .navigationBarTitleDisplayMode(.inline)
                 .padding(15)
                 .onAppear(perform: {
@@ -151,9 +169,40 @@ struct NewGoalView: View {
         do {
             try PersistenceController.shared.save()
             print("Saving saved: \(targetAmount) on \(date)")
+            goalsVm.fetchGols()
             self.presentationMode.wrappedValue.dismiss()
         } catch {
             print("Error saving the saving: \(error.localizedDescription)")
+        }
+    }
+    
+    private func updateGoal() {
+        if let goal = goalForEdit {
+            
+            // Convertir la cantidad a un tipo Double
+            guard let targetAmount = Double(targetAmount) else {
+                print("Invalid amount")
+                return
+            }
+            
+            
+            
+            goal.targetAmount = targetAmount
+          
+            goal.date = Date()
+            goal.note = note
+            goal.currentAmount = 0
+            goal.name = name
+            
+            
+            
+            do {
+                try PersistenceController.shared.save()
+                goalsVm.fetchGols()
+                self.presentationMode.wrappedValue.dismiss()
+            }catch {
+                print("Error saving the saving: \(error.localizedDescription)")
+            }
         }
     }
     

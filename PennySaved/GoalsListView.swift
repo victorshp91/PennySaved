@@ -13,7 +13,7 @@ struct GoalsListView: View {
     @State var isForSelect: Bool
     @Binding var selectedGoal: Goals?
     @State var firstGoal: Goals?
-    
+    @State var donePressed = false
     
     
     var body: some View {
@@ -28,17 +28,21 @@ struct GoalsListView: View {
                         ForEach(goalsVm.goals) { goal in
                             HStack{
                                 if isForSelect && goalsVm.totalSavings(for: goal) < goal.targetAmount {
-                                    Button(action :{
-                                        
-                                        selectedGoal = goal
-                                        
-                                        
+                                    Button(action: {
+                                        if selectedGoal == goal {
+                                            selectedGoal = nil  // Deseleccionar si ya está seleccionado
+                                        } else {
+                                            selectedGoal = goal  // Seleccionar si no está seleccionado
+                                        }
                                     }) {
-                                        Image(systemName: selectedGoal == goal ?  "checkmark.circle.fill":"circle")
-                                            .foregroundStyle(selectedGoal == goal ? Color.green:Color.white)
+                                        Image(systemName: selectedGoal == goal ? "checkmark.circle.fill" : "circle")
+                                            .foregroundStyle(selectedGoal == goal ? Color.green : Color.white)
                                             .font(.title)
                                     }
                                 }
+
+                                
+                                
                                 
                                 GoalCellView(goal: goal)
                                    
@@ -54,12 +58,19 @@ struct GoalsListView: View {
                             firstGoal = selectedGoal
                         }
                     })
+                    .onDisappear(perform: {
+                        if !donePressed {
+                            selectedGoal = firstGoal
+                        }
+                    })
+                
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color("bg"))
                 .toolbar {
                     if isForSelect {
                         ToolbarItem(placement:.topBarTrailing) {
                             Button(action: {
+                                donePressed = true
                                 self.presentationMode.wrappedValue.dismiss()
                             }) {
                                 Text("Done")

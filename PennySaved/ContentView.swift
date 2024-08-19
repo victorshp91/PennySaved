@@ -12,10 +12,8 @@ import Charts
 struct ContentView: View {
     
     @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
-    @FetchRequest(
-        entity: Saving.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \Saving.date, ascending: false)]
-    ) var savings: FetchedResults<Saving>
+    @EnvironmentObject var savingsVm: SavingsVm  // Access the SavingsVm instance
+ 
     
 
     var today: Date {
@@ -36,18 +34,18 @@ struct ContentView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd MMM yyyy"
         let todayString = formatter.string(from: today)
-        return savings.filter { formatter.string(from: $0.date ?? Date()) == todayString }
+        return savingsVm.savings.filter { formatter.string(from: $0.date ?? Date()) == todayString }
     }
     
     var savingsThisMonth: [Saving] {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
         let currentMonthString = formatter.string(from: Date())
-        return savings.filter { formatter.string(from: $0.date ?? Date()) == currentMonthString }
+        return savingsVm.savings.filter { formatter.string(from: $0.date ?? Date()) == currentMonthString }
     }
 
     var totalAmount: Double {
-        savings.reduce(0) { $0 + ($1.amount) }
+        savingsVm.savings.reduce(0) { $0 + ($1.amount) }
     }
 
     var totalAmountThisMonth: Double {
@@ -60,7 +58,7 @@ struct ContentView: View {
         for month in 1...12 {
             let startDate = Calendar.current.date(from: DateComponents(year: currentYear, month: month, day: 1))!
             let endDate = Calendar.current.date(byAdding: .month, value: 1, to: startDate)!
-            let filteredSavings = savings.filter {
+            let filteredSavings = savingsVm.savings.filter {
                 if let date = $0.date {
                     return date >= startDate && date < endDate
                 }
@@ -147,49 +145,13 @@ struct ContentView: View {
                     }.padding(.horizontal, 15)
                     
                     // Savings Chart
-                    VStack(alignment: .leading, spacing: 10) {
-                        VStack(alignment: .leading, spacing: .zero){
-                            Text("Monthly Breakdown")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                            Text("Current Year")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
-                        Chart {
-                            ForEach(monthlySavings, id: \.month) { data in
-                                BarMark(
-                                    x: .value("Month", data.month),
-                                    y: .value("Saving", data.amount)
-                                )
-                                .annotation {
-                                    Text("$\(data.amount.formatted())")
-                                        .rotationEffect(.degrees(-90))
-                                        .font(.caption)
-                                        .frame(maxHeight: .infinity)
-                                        .foregroundStyle(.white)
-                                        .fixedSize()
-                                        .padding(.vertical)
-                                }
-                                .annotation(position: .bottom, alignment: .center, spacing: 5) {
-                                    Text(abbreviatedMonth(from: data.month))
-                                        .font(.caption)
-                                        .foregroundStyle(.white)
-                                }
-                                .foregroundStyle(Color("buttonPrimary"))
-                                .cornerRadius(5)
-                            }
-                        }
-                        .chartXAxis(.hidden)
-                        .chartYAxis(.hidden)
+                 
+                       
+                        MonthlySavingsChartView(monthlySavings: monthlySavings)
                         
                         
-                    }
-                    .foregroundStyle(.white)
-                    .padding()
-                    .background(Color("boxesBg"))
-                    .cornerRadius(10)
-                    .padding(.horizontal, 5)
+                    
+                    
               
                    
                     
@@ -215,7 +177,7 @@ struct ContentView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack{
                             if !goalsVm.goals.isEmpty {
-                                ForEach(goalsVm.goals) {goal in
+                                ForEach(goalsVm.goals.prefix(3)) {goal in
                                     
                                     GoalCellView(goal: goal)
                                 }
@@ -232,7 +194,7 @@ struct ContentView: View {
                     HStack {
                         Text("Today").foregroundStyle(.white)
                         Spacer()
-                        NavigationLink(destination: savigsListView(saving: Array(savings))) {
+                        NavigationLink(destination: savigsListView(saving: savingsVm.savings)) {
                             HStack {
                                 Spacer()
                                 Text("View All")
@@ -292,6 +254,80 @@ struct ContentView: View {
 }
 
 
+import SwiftUI
+
+struct MonthlySavingsChartView: View {
+    @State var monthlySavings: [(month: String, amount: Double)]
+    @State var showChart = true
+    var uniqueId = UUID() // Forzando la actualización cuando cambian los datos
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack {
+                
+                VStack(alignment: .leading, spacing: .zero){
+                    HStack{
+                        Text("Monthly Breakdown")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                        Spacer()
+                        Button(showChart ? "Hide" : "Show") {
+                            withAnimation {
+                                showChart.toggle()
+                            }
+                        }
+                    }
+                    Text("Current Year")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                
+                
+                }
+            
+            .padding(.top, 5)
+            .padding(.horizontal, 10)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                if showChart {
+                    // Calcula el valor máximo para escalar las alturas de las barras
+                    let maxAmount = monthlySavings.map { $0.amount }.max() ?? 1.0
+                    
+                    // Mostrar el gráfico de barras para cada mes
+                    HStack(alignment: .bottom, spacing: 5) {
+                        ForEach(monthlySavings, id: \.month) { data in
+                            VStack {
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(Color("buttonPrimary"))
+                                    .frame(width: 20, height: CGFloat(data.amount) / CGFloat(maxAmount) * 50) // Escalar la altura basado en el valor máximo
+                                
+                                VStack {
+                                    Text("\(data.amount, specifier: "%.2f")")
+                                    Text(data.month)
+                                }
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.top, 2)
+                            }
+                            .padding(.horizontal, 5)
+                        }
+                    }.padding(.vertical)
+                        .padding(.horizontal, 5)
+                  
+                   
+                }
+            }
+        }.foregroundStyle(.white)
+       
+            .frame(maxHeight: .infinity)
+            .background(Color("boxesBg"))
+            .cornerRadius(10)
+            .padding(.horizontal, 5)
+           
+       
+        .id(uniqueId) // Forzar la actualización de la vista
+    }
+}
 
 
 
