@@ -77,6 +77,12 @@ struct ContentView: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 20) {
+                    
+                    Image("cabecera")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 40)
+                        .padding(.horizontal, 15)
                     // PROFILE HEADER
                     ScrollView(.horizontal) {
                         HStack {
@@ -114,7 +120,7 @@ struct ContentView: View {
                                 .scaledToFit()
                                 .frame(width: 40)
                             VStack(alignment:.leading) {
-                                Text("This Month Potential Savings").font(.caption)
+                                Text("This Month ThinkTwiceSave").font(.caption)
                                 Text("$\(totalAmountThisMonth, specifier: "%.2f")").bold()
                             }
                             Spacer()
@@ -131,7 +137,7 @@ struct ContentView: View {
                                 .scaledToFit()
                                 .frame(width: 40)
                             VStack(alignment:.leading) {
-                                Text("Lifetime Potential Savings").font(.caption)
+                                Text("Lifetime ThinkTwiceSave").font(.caption)
                                 
                                 Text("$\(totalAmount, specifier: "%.2f")").bold()
                             }
@@ -216,7 +222,7 @@ struct ContentView: View {
                                 .padding(.horizontal, 15)
                         }
                     } else {
-                        ContentUnavailableView("No savings found Today", systemImage: "dollarsign.circle.fill")
+                        ContentUnavailableView("No ThinkTwiceSave found Today", systemImage: "dollarsign.circle.fill")
                     }
                     
                     
@@ -230,7 +236,7 @@ struct ContentView: View {
                             }
                         } else {
                             
-                            ContentUnavailableView("No savings found this month", systemImage: "dollarsign.circle.fill")
+                            ContentUnavailableView("No ThinkTwiceSave found this month", systemImage: "dollarsign.circle.fill")
                             
                         }
                     }.padding(.horizontal, 15)
@@ -238,10 +244,23 @@ struct ContentView: View {
                 }
                 Spacer()
             }
+           
             
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("bg"))
-            .navigationTitle("Dashboard")
+            .toolbar {
+          
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            print("")
+                        }) {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundStyle(Color("buttonPrimary"))
+                        }
+                    }
+                    
+                
+            }
             
         }
     }

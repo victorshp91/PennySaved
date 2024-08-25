@@ -145,7 +145,7 @@ struct savigsListView: View {
                     
                     
                     if sortedSavings().isEmpty {
-                        ContentUnavailableView("No saving found matching your search", systemImage: "magnifyingglass.circle.fill")
+                        ContentUnavailableView("No ThinkTwiceSave found matching your search", systemImage: "magnifyingglass.circle.fill")
                     } else {
                         if goal != nil {
                             HStack {
@@ -161,7 +161,7 @@ struct savigsListView: View {
                         }
                     }
                     
-                }.navigationTitle("Savings")
+                }.navigationTitle("ThinkTwiceSave")
                     .navigationBarTitleDisplayMode(.inline)
                     .padding(.top)
             }.frame(maxWidth: .infinity, maxHeight: .infinity)

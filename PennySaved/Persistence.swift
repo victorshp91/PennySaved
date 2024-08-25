@@ -28,7 +28,7 @@ class PersistenceController {
         }
         
         // Set CloudKit container options
-        let cloudKitOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.PennySaved")
+        let cloudKitOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.com.victorshp.PennySaved")
         description.cloudKitContainerOptions = cloudKitOptions
         
         // Enable remote change notifications

@@ -48,7 +48,6 @@ class CategoryManager {
         }.resume()
     }
 
-
     func saveCategoriesToCoreData(_ categories: [[String: String]], context: NSManagedObjectContext) {
         let fetchRequest: NSFetchRequest<Category> = Category.fetchRequest()
 
@@ -112,7 +111,6 @@ class CategoryManager {
             print("Error saving to CoreData: \(error)")
         }
     }
-
 
     func fetchAndUpdateCategories(context: NSManagedObjectContext) {
         fetchCategoriesFromURL { categories in

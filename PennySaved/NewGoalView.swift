@@ -59,7 +59,7 @@ struct NewGoalView: View {
                         HStack{
                             VStack(alignment:.leading, spacing: 10){
                                 HStack{
-                                    Text("Current Amount Saved")
+                                    Text("Current Amount ThinkTwiceSave")
                                     Spacer()
                                     Text("$\(goalsVm.totalSavings(for: goal), specifier: "%.2f")").bold()
                                 }
@@ -76,7 +76,7 @@ struct NewGoalView: View {
                                     }
                                     HStack{
                                         if goalsVm.totalSavings(for: goal) != goal.targetAmount {
-                                            Text("Remainig")
+                                            Text("Remaining")
                                             Text("$\(goal.targetAmount - goalsVm.totalSavings(for: goal), specifier: "%.2f")").bold()
                                         } else {
                                             

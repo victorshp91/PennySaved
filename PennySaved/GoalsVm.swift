@@ -10,7 +10,6 @@ import CoreData
 import SwiftUI
 
 class GoalsVm: ObservableObject {
-    
     private let viewContext: NSManagedObjectContext
     
     @Published var goals: [Goals] = []
@@ -18,27 +17,47 @@ class GoalsVm: ObservableObject {
     
     init(viewContext: NSManagedObjectContext) {
         self.viewContext = viewContext
-        fetchGols()
-        
+        setupCloudKitSyncObserver()
     }
+    
+    private func setupCloudKitSyncObserver() {
+        // Observe Core Data's CloudKit sync notifications
+        NotificationCenter.default.addObserver(self, selector: #selector(cloudKitDataChanged), name: .NSPersistentStoreRemoteChange, object: nil)
+        
+        // Attempt to fetch data initially in case it's already available
+        
+        fetchGols()
+    }
+    
+    @objc private func cloudKitDataChanged() {
+        // Whenever CloudKit data changes, re-fetch the goals
+        fetchGols()
+    }
+    
     func fetchGols() {
         let request: NSFetchRequest<Goals> = Goals.fetchRequest()
         
-        // Sort the results by date in ascending order
+        // Sort the results by date in descending order
         let sortDescriptor = NSSortDescriptor(key: "date", ascending: false)
         request.sortDescriptors = [sortDescriptor]
         
         do {
-            goals = try viewContext.fetch(request)
+            let fetchedGoals = try viewContext.fetch(request)
+            
+            // Ensure that updating the goals array happens on the main thread
+            DispatchQueue.main.async {
+                withAnimation {
+                    self.goals = fetchedGoals
+                }
+            }
         } catch {
             print("Failed to fetch goals: \(error.localizedDescription)")
         }
     }
     
-    
-    // Función para sumar el monto total de los savings asociados a un goal
-        func totalSavings(for goal: Goals) -> Double {
-            let savings = goal.saving?.allObjects as? [Saving]
-            return savings?.reduce(0) { $0 + ($1.amount) } ?? 0
-        }
+    // Function to sum the total amount of savings associated with a goal
+    func totalSavings(for goal: Goals) -> Double {
+        let savings = goal.saving?.allObjects as? [Saving]
+        return savings?.reduce(0) { $0 + ($1.amount) } ?? 0
+    }
 }

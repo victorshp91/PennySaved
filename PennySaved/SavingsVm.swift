@@ -16,11 +16,24 @@ class SavingsVm: ObservableObject {
     @Published var savings: [Saving] = []
     static let shared = SavingsVm(viewContext: PersistenceController.shared.container.viewContext)
     
+    
     init(viewContext: NSManagedObjectContext) {
-        self.viewContext = viewContext
-        fetchSavings()
-        
-    }
+          self.viewContext = viewContext
+          setupCloudKitSyncObserver()
+      }
+      
+      private func setupCloudKitSyncObserver() {
+          // Observe Core Data's CloudKit sync notifications
+          NotificationCenter.default.addObserver(self, selector: #selector(cloudKitDataChanged), name: .NSPersistentStoreRemoteChange, object: nil)
+          
+          // Also attempt to fetch data initially in case it's already available
+          fetchSavings()
+      }
+      
+      @objc private func cloudKitDataChanged() {
+          // Whenever CloudKit data changes, re-fetch the savings
+          fetchSavings()
+      }
     func fetchSavings() {
         let request: NSFetchRequest<Saving> = Saving.fetchRequest()
         
@@ -29,7 +42,14 @@ class SavingsVm: ObservableObject {
         request.sortDescriptors = [sortDescriptor]
         
         do {
-            savings = try viewContext.fetch(request)
+            let fetchedSavings = try viewContext.fetch(request)
+                       
+                       // Ensure that updating the savings array happens on the main thread
+                       DispatchQueue.main.async {
+                           withAnimation {
+                               self.savings = fetchedSavings
+                           }
+                       }
         } catch {
             print("Failed to fetch savings: \(error.localizedDescription)")
         }
