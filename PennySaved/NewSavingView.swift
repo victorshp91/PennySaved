@@ -23,16 +23,18 @@ struct NewSavingView: View {
     @State  var isForEdit = false
     @State  var savingForEdit: Saving?
     
-    
+    @State private var errorMessage: String = ""
     @State private var showDeleteAlert = false
     
     var body: some View {
+        let validationResult = validateForm()
         
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 20) {
                 // NOMBRE DEL ARTÍCULO
-                Text("What did you almost buy?")
+                Text("What did you ThinkTwiceSave?")
                     .foregroundStyle(.white)
+                Text("Your almost-expense (but now savings)").foregroundStyle(.secondary).font(.caption)
                 
                 HStack {
                  
@@ -94,7 +96,7 @@ struct NewSavingView: View {
                                 .background(Color("buttonPrimary"))
                                 .cornerRadius(16)
                         }.sheet(isPresented: $showGoals) {
-                            GoalsListView(isForSelect: true, selectedGoal: $selectedGoal)
+                            GoalsListView(isForSelect: true, selectedGoal: $selectedGoal, saving: savingForEdit)
                            
                         }
                         
@@ -139,26 +141,34 @@ struct NewSavingView: View {
                     .background(Color("boxesBg"))
                     .cornerRadius(16)
                 
-               
+                // Your existing form fields here
+                   
+                if let errorMessage = validationResult.errorMessage {
+                          Text(errorMessage)
+                              .foregroundColor(.red)
+                              .padding()
+                      }
                 
                 // BOTÓN "GUARDAR"
                 Button(action: {
-                    if isForEdit {
-                        updateSaving()
-                    }else {
-                        // Acción para guardar el ahorro
-                        saveSaving()
+                    if validationResult.isValid {
+                        if isForEdit {
+                            updateSaving()
+                        }else {
+                            // Acción para guardar el ahorro
+                            saveSaving()
+                        }
                     }
                 }) {
                     Text("Save Saving")
                         .font(.headline)
-                        .foregroundColor(isFormValid() ? .black : Color.white)
+                        .foregroundColor(validationResult.isValid ? .black : Color.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(isFormValid() ? Color("buttonPrimary") : Color.gray)
+                        .background(validationResult.isValid ? Color("buttonPrimary") : Color.gray)
                         .cornerRadius(16)
                 }
-                .disabled(!isFormValid())
+                .disabled(!validationResult.isValid)
                
                 
             }
@@ -290,14 +300,38 @@ struct NewSavingView: View {
     }
     
     // VALIDACIÓN DEL FORMULARIO
-    private func isFormValid() -> Bool {
-        if let _ = Double(amount), !amount.isEmpty && !name.isEmpty && Double(amount) != 0  && category != nil{
-            return true
+    private func validateForm() -> ValidationResult {
+        guard let amountDouble = Double(amount), !amount.isEmpty else {
+            return ValidationResult(isValid: false, errorMessage: "Please enter a valid amount.")
         }
-        return false
+        
+        if amountDouble == 0 {
+            return ValidationResult(isValid: false, errorMessage: "Amount must be greater than zero.")
+        }
+        
+        if name.isEmpty {
+            return ValidationResult(isValid: false, errorMessage: "Please enter a name for the saving.")
+        }
+        
+        if category == nil {
+            return ValidationResult(isValid: false, errorMessage: "Please select a category.")
+        }
+        
+        if let selectedGoal = selectedGoal {
+            let remainingAmount = selectedGoal.targetAmount - goalsVm.totalSavings(for: selectedGoal)
+            if amountDouble > remainingAmount {
+                return ValidationResult(isValid: false, errorMessage: "Amount exceeds the remaining goal amount. Maximum allowed: \(String(format: "%.2f", remainingAmount))")
+            }
+        }
+        
+        return ValidationResult(isValid: true, errorMessage: nil)
     }
 }
 
+struct ValidationResult {
+    let isValid: Bool
+    let errorMessage: String?
+}
 #Preview {
     NewSavingView()
 }

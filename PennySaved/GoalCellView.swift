@@ -11,6 +11,7 @@ struct GoalCellView: View {
     @State private var progress: Double = 0.0 // Progress of deck completion
     @State var goal: Goals
     @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
+    @State var isForSelect: Bool
     
     var targetProgress: Double {
         return Double(goalsVm.totalSavings(for: goal)) / Double(goal.targetAmount)
@@ -26,12 +27,25 @@ struct GoalCellView: View {
                 
                 Text("Date Started\n\(goal.date ?? Date(), style: .date)").font(.footnote)
                     .multilineTextAlignment(.leading)
-                   
-                
-                NavigationLink(destination: NewGoalView(isForEdit: true, goalForEdit: goal)) {
+                HStack{
+                    if goalsVm.totalSavings(for: goal) != goal.targetAmount {
+                        Text("Remainig")
+                        Text("$\(goal.targetAmount - goalsVm.totalSavings(for: goal), specifier: "%.2f")").bold()
+                    } else {
                     
-                    Text("Details")
-                        .foregroundStyle(Color("buttonPrimary"))
+                        Text("Congratulation").foregroundStyle(.green)
+                        Image(systemName: "party.popper")
+                        
+                    }
+                  
+                }
+                   
+                if !isForSelect {
+                    NavigationLink(destination: NewGoalView(isForEdit: true, goalForEdit: goal)) {
+                        
+                        Text("Details")
+                            .foregroundStyle(Color("buttonPrimary"))
+                    }
                 }
                
               
@@ -77,5 +91,5 @@ struct GoalCellView: View {
 }
 
 #Preview {
-    GoalCellView(goal: Goals.init())
+    GoalCellView(goal: Goals.init(), isForSelect: false)
 }

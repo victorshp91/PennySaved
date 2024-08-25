@@ -13,9 +13,9 @@ struct ContentView: View {
     
     @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
     @EnvironmentObject var savingsVm: SavingsVm  // Access the SavingsVm instance
- 
     
-
+    
+    
     var today: Date {
         Calendar.current.startOfDay(for: Date())
     }
@@ -25,7 +25,7 @@ struct ContentView: View {
         formatter.dateFormat = "MMMM yyyy"
         return formatter.string(from: Date())
     }
-
+    
     var currentYear: Int {
         Calendar.current.component(.year, from: Date())
     }
@@ -43,15 +43,15 @@ struct ContentView: View {
         let currentMonthString = formatter.string(from: Date())
         return savingsVm.savings.filter { formatter.string(from: $0.date ?? Date()) == currentMonthString }
     }
-
+    
     var totalAmount: Double {
         savingsVm.savings.reduce(0) { $0 + ($1.amount) }
     }
-
+    
     var totalAmountThisMonth: Double {
         savingsThisMonth.reduce(0) { $0 + ($1.amount) }
     }
-
+    
     var monthlySavings: [(month: String, amount: Double)] {
         var monthlyData = [(month: String, amount: Double)]()
         
@@ -82,14 +82,14 @@ struct ContentView: View {
                         HStack {
                             NavigationLink(destination: NewSavingView()) {
                                 HStack{
-                                    Text("New Almost Saving")
+                                    Text("New ThinkTwiceSave")
                                     Image(systemName: "plus")
                                     
                                 }.padding()
                                     .background(Color("buttonPrimary"))
                                     .foregroundStyle(.black)
                                     .cornerRadius(50)
-                                   
+                                
                             }
                             NavigationLink(destination: NewGoalView()) {
                                 HStack{
@@ -104,7 +104,7 @@ struct ContentView: View {
                         } .font(.headline).bold()
                             .padding(.horizontal, 15)
                     }
-                   
+                    
                     
                     // THIS MONTH SAVED & TOTAL SAVINGS
                     HStack {
@@ -145,20 +145,15 @@ struct ContentView: View {
                     }.padding(.horizontal, 15)
                     
                     // Savings Chart
-                 
-                       
-                        MonthlySavingsChartView(monthlySavings: monthlySavings)
-                        
-                        
                     
                     
-              
-                   
+                    MonthlySavingsChartView()
+                    
                     
                     // Goals Section
                     
                     HStack {
-                        Text("Savings Goals").foregroundStyle(.white)
+                        Text("ThinkTwiceSave Goals").foregroundStyle(.white)
                         Spacer()
                         NavigationLink(destination: GoalsListView(isForSelect: false, selectedGoal: Binding.constant(nil))) {
                             HStack {
@@ -174,21 +169,29 @@ struct ContentView: View {
                         
                     }.padding(.horizontal, 15)
                     
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack{
-                            if !goalsVm.goals.isEmpty {
-                                ForEach(goalsVm.goals.prefix(3)) {goal in
-                                    
-                                    GoalCellView(goal: goal)
-                                }
-                            } else {
-                                ContentUnavailableView("No goals found", systemImage: "figure.walk.circle.fill")
-                                
+                    
+                    HStack{
+                        if !goalsVm.goals.isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack{
+                                    ForEach(goalsVm.goals.prefix(3)) {goal in
+                                        
+                                        GoalCellView(goal: goal, isForSelect: false)
+                                    }
+                                }.padding(.horizontal, 15)
                             }
-                        }  .padding(.horizontal, 15)
+                        } else {
+                            Spacer()
+                            ContentUnavailableView("No goals found", systemImage: "figure.walk.circle.fill")
+                            Spacer()
+                            
+                            
+                            
+                        }
                     }
-
-                   
+                    
+                    
+                    
                     
                     // TODAY
                     HStack {
@@ -216,21 +219,21 @@ struct ContentView: View {
                         ContentUnavailableView("No savings found Today", systemImage: "dollarsign.circle.fill")
                     }
                     
-                   
-                        // This Month
-                        VStack(alignment: .leading){
-                            Text("This Month").foregroundStyle(.white)
-                            if !savingsThisMonth.isEmpty {
-                                ForEach(savingsThisMonth) { datum in
-                                    savingTransactionCellView(saving: datum)
-                                        
-                                }
-                            } else {
-                                
-                                ContentUnavailableView("No savings found this month", systemImage: "dollarsign.circle.fill")
+                    
+                    // This Month
+                    VStack(alignment: .leading){
+                        Text("This Month").foregroundStyle(.white)
+                        if !savingsThisMonth.isEmpty {
+                            ForEach(savingsThisMonth) { datum in
+                                savingTransactionCellView(saving: datum)
                                 
                             }
-                        }.padding(.horizontal, 15)
+                        } else {
+                            
+                            ContentUnavailableView("No savings found this month", systemImage: "dollarsign.circle.fill")
+                            
+                        }
+                    }.padding(.horizontal, 15)
                     
                 }
                 Spacer()
@@ -251,18 +254,13 @@ struct ContentView: View {
         dateFormatter.dateFormat = "MMM" // Abbreviated month name
         return date != nil ? dateFormatter.string(from: date!) : month
     }
-}
-
-
-import SwiftUI
-
-struct MonthlySavingsChartView: View {
-    @State var monthlySavings: [(month: String, amount: Double)]
-    @State var showChart = true
-    var uniqueId = UUID() // Forzando la actualización cuando cambian los datos
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+    
+    
+    func MonthlySavingsChartView() -> some View {
+        
+        
+        
+        return VStack(alignment: .leading, spacing: 5) {
             HStack {
                 
                 VStack(alignment: .leading, spacing: .zero){
@@ -271,11 +269,7 @@ struct MonthlySavingsChartView: View {
                             .font(.title2)
                             .fontWeight(.semibold)
                         Spacer()
-                        Button(showChart ? "Hide" : "Show") {
-                            withAnimation {
-                                showChart.toggle()
-                            }
-                        }
+                        
                     }
                     Text("Current Year")
                         .font(.footnote)
@@ -283,51 +277,58 @@ struct MonthlySavingsChartView: View {
                 }
                 
                 
-                }
+            }
             
-            .padding(.top, 5)
-            .padding(.horizontal, 10)
+            .padding()
+           
             
             ScrollView(.horizontal, showsIndicators: false) {
-                if showChart {
-                    // Calcula el valor máximo para escalar las alturas de las barras
-                    let maxAmount = monthlySavings.map { $0.amount }.max() ?? 1.0
-                    
-                    // Mostrar el gráfico de barras para cada mes
-                    HStack(alignment: .bottom, spacing: 5) {
-                        ForEach(monthlySavings, id: \.month) { data in
+                // Calculate the maximum value to scale the bar heights
+                let maxAmount = monthlySavings.map { $0.amount }.max() ?? 1.0
+
+                // Show the bar chart for each month
+                HStack(alignment: .bottom, spacing: 5) {
+                    ForEach(monthlySavings, id: \.month) { data in
+                        VStack {
+                            RoundedRectangle(cornerRadius: 5)
+                                .fill(Color("buttonPrimary"))
+                                .frame(
+                                    width: 20,
+                                    height: maxAmount > 0 ? CGFloat(data.amount) / CGFloat(maxAmount) * 50 : 0 // Scale height based on the maximum value, ensure no division by zero
+                                )
+                            
                             VStack {
-                                RoundedRectangle(cornerRadius: 5)
-                                    .fill(Color("buttonPrimary"))
-                                    .frame(width: 20, height: CGFloat(data.amount) / CGFloat(maxAmount) * 50) // Escalar la altura basado en el valor máximo
-                                
-                                VStack {
-                                    Text("\(data.amount, specifier: "%.2f")")
-                                    Text(data.month)
-                                }
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.top, 2)
+                                Text("$\(data.amount, specifier: "%.2f")").bold()
+                                Text(data.month)
                             }
-                            .padding(.horizontal, 5)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.top, 2)
                         }
-                    }.padding(.vertical)
                         .padding(.horizontal, 5)
-                  
-                   
+                    }
                 }
+                .padding(.vertical)
+                .padding(.horizontal, 10)
+
+                
+                
+                
             }
         }.foregroundStyle(.white)
-       
+        
             .frame(maxHeight: .infinity)
             .background(Color("boxesBg"))
             .cornerRadius(10)
-            .padding(.horizontal, 5)
-           
-       
-        .id(uniqueId) // Forzar la actualización de la vista
+            .padding(.horizontal, 15)
+        
+        
+        
     }
 }
+
+
+
 
 
 

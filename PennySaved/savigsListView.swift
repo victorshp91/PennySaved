@@ -148,7 +148,10 @@ struct savigsListView: View {
                         ContentUnavailableView("No saving found matching your search", systemImage: "magnifyingglass.circle.fill")
                     } else {
                         if goal != nil {
-                            Text("Almost Savings for Goal \(goal?.name ?? "NO DATA")")
+                            HStack {
+                                Text("\(goal?.name ?? "NO DATA")").bold()
+                                Spacer()
+                            }   .padding(.horizontal, 15)
                         }
                         ForEach(sortedSavings()) { datum in
                             savingTransactionCellView(saving: datum)

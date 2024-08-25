@@ -22,16 +22,19 @@ class SavingsVm: ObservableObject {
         
     }
     func fetchSavings() {
-        
         let request: NSFetchRequest<Saving> = Saving.fetchRequest()
-       
+        
+        // Añadir un descriptor de ordenamiento por fecha ascendente
+        let sortDescriptor = NSSortDescriptor(key: "date", ascending: false)
+        request.sortDescriptors = [sortDescriptor]
         
         do {
             savings = try viewContext.fetch(request)
         } catch {
-            print("Failed to fetch decks: \(error.localizedDescription)")
+            print("Failed to fetch savings: \(error.localizedDescription)")
         }
     }
+
     
     
     // Función para sumar el monto total de los savings asociados a un goal

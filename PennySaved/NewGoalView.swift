@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NewGoalView: View {
+    @State var showDeleteAlert = false
     @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
     @EnvironmentObject var savingsVm: SavingsVm  // Access the GoalsVm instance
     @Environment(\.presentationMode) var presentationMode
@@ -15,7 +16,7 @@ struct NewGoalView: View {
     @State  var isForEdit = false
     @State  var goalForEdit: Goals?
     
-    @State var showAlmostSavings = false
+    @State var showThinkTwiceSave = false
     @State private var name = ""
     @State private var note = ""
     @State private var targetAmount = "0"
@@ -26,7 +27,7 @@ struct NewGoalView: View {
             VStack(alignment: .leading, spacing: 20) {
                 
                 // NOMBRE DEL ARTÍCULO
-                Text("Goal Name")
+                Text("ThinkTwiceSave Goal Name")
                     .foregroundStyle(.white)
                 
                 HStack {
@@ -54,30 +55,43 @@ struct NewGoalView: View {
                 .cornerRadius(16)
                 // CURRENT AMOUNT SI ES PARA EDIT
                 if isForEdit {
-                    HStack{
-                        VStack(alignment:.leading, spacing: 10){
-                            HStack{
-                                Text("Current Amount")
-                                Spacer()
-                                Text("\(goalsVm.totalSavings(for: goalForEdit ?? Goals()), specifier: "%.2f")")
-                            }
-                            if isForEdit {
-                                Button(action: {
-                                    showAlmostSavings = true
-                                }){
-                                    Text("See Almost Savings on this Goal")
-                                        .foregroundStyle(Color("buttonPrimary"))
-                                }.sheet(isPresented: $showAlmostSavings) {
-                                    savigsListView(goal:goalForEdit, saving: savingsVm.savings.filter { $0.goal == goalForEdit })
-                                        .presentationDetents([.medium,.large])
-                                    
+                    if let goal = goalForEdit {
+                        HStack{
+                            VStack(alignment:.leading, spacing: 10){
+                                HStack{
+                                    Text("Current Amount Saved")
+                                    Spacer()
+                                    Text("$\(goalsVm.totalSavings(for: goal), specifier: "%.2f")").bold()
+                                }
+                                if isForEdit {
+                                    Button(action: {
+                                        showThinkTwiceSave = true
+                                    }){
+                                        Text("See ThinkTwiceSave on this Goal")
+                                            .foregroundStyle(Color("buttonPrimary"))
+                                    }.sheet(isPresented: $showThinkTwiceSave) {
+                                        savigsListView(goal:goalForEdit, saving: savingsVm.savings.filter { $0.goal == goalForEdit })
+                                            .presentationDetents([.medium,.large])
+                                        
+                                    }
+                                    HStack{
+                                        if goalsVm.totalSavings(for: goal) != goal.targetAmount {
+                                            Text("Remainig")
+                                            Text("$\(goal.targetAmount - goalsVm.totalSavings(for: goal), specifier: "%.2f")").bold()
+                                        } else {
+                                            
+                                            Text("Congratulation").foregroundStyle(.green)
+                                            Image(systemName: "party.popper")
+                                            
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    }.padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color("boxesBg"))
-                        .cornerRadius(16)
+                        }.padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color("boxesBg"))
+                            .cornerRadius(16)
+                    }
                 }
                 
                 
@@ -143,6 +157,45 @@ struct NewGoalView: View {
             
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("bg"))
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    if isForEdit {
+                        Button("Delete") {
+                            showDeleteAlert = true       // Trigger the alert
+                           
+                            
+                        }.foregroundStyle(.red)
+                            .alert(isPresented: $showDeleteAlert) {
+                                Alert(
+                                    title: Text("Delete Goal"),
+                                    message: Text("Are you sure you want to delete this goal?"),
+                                    primaryButton: .destructive(Text("Delete")) {
+                                        if let goal = goalForEdit {
+                                            deleteSaving(goal: goal)
+                                        }
+                                    },
+                                    secondaryButton: .cancel()
+                                )
+                            }
+                    }
+                }
+            }
+    }
+    // delete saving
+    private func deleteSaving(goal: Goals) {
+        let context = PersistenceController.shared.container.viewContext
+
+        context.delete(goal) // Delete the Saving from the context
+        
+        // Save the context to persist the deletion
+        do {
+            try PersistenceController.shared.save()
+            goalsVm.fetchGols() // PARA ACUTALIZAR EL ARRAY CON LOS SAVINGS
+            self.presentationMode.wrappedValue.dismiss()
+            print("Goal deleted successfully.")
+        } catch {
+            print("Failed to delete goal: \(error.localizedDescription)")
+        }
     }
     
     // GUARDAR EN COREDATA

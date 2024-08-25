@@ -25,6 +25,7 @@
 		F2768B452C704A5900179B04 /* GoalsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B442C704A5900179B04 /* GoalsListView.swift */; };
 		F2768B472C7051E400179B04 /* GoalsVm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B462C7051E400179B04 /* GoalsVm.swift */; };
 		F2768B492C70D2E700179B04 /* SavingsVm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B482C70D2E700179B04 /* SavingsVm.swift */; };
+		F2768B4B2C7ACC5400179B04 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2768B4A2C7ACC5400179B04 /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		F2768B442C704A5900179B04 /* GoalsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsListView.swift; sourceTree = "<group>"; };
 		F2768B462C7051E400179B04 /* GoalsVm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsVm.swift; sourceTree = "<group>"; };
 		F2768B482C70D2E700179B04 /* SavingsVm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavingsVm.swift; sourceTree = "<group>"; };
+		F2768B4A2C7ACC5400179B04 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +98,7 @@
 				F2768B322C6AF98B00179B04 /* savingTransactionCellView.swift */,
 				F2768B3E2C6F7D4000179B04 /* SearchBarView.swift */,
 				F2768B242C6ADEEF00179B04 /* Assets.xcassets */,
+				F2768B4A2C7ACC5400179B04 /* Launch Screen.storyboard */,
 				F2768B262C6ADEEF00179B04 /* PennySaved.entitlements */,
 				F2768B1F2C6ADEEE00179B04 /* PennySaved.xcdatamodeld */,
 				F2768B382C6B94C600179B04 /* CategoriesManager.swift */,
@@ -171,6 +174,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2768B4B2C7ACC5400179B04 /* Launch Screen.storyboard in Resources */,
 				F2768B292C6ADEEF00179B04 /* Preview Assets.xcassets in Resources */,
 				F2768B252C6ADEEF00179B04 /* Assets.xcassets in Resources */,
 			);
@@ -333,17 +337,18 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PennySaved/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Almost Savings";
+				INFOPLIST_KEY_CFBundleDisplayName = ThinkTwiceSave;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -352,7 +357,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.victorshp.PennySaved;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -373,17 +380,18 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PennySaved/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Almost Savings";
+				INFOPLIST_KEY_CFBundleDisplayName = ThinkTwiceSave;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -392,7 +400,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.victorshp.PennySaved;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
