@@ -22,6 +22,7 @@ struct NewGoalView: View {
     @State private var targetAmount = "0"
     @State private var currentAmount = 0.0
     @State private var date = Date()
+    @State private var completed = false
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 20) {
@@ -74,16 +75,43 @@ struct NewGoalView: View {
                                             .presentationDetents([.medium,.large])
                                         
                                     }
-                                    HStack{
-                                        if goalsVm.totalSavings(for: goal) != goal.targetAmount {
-                                            Text("Remaining")
-                                            Text("$\(goal.targetAmount - goalsVm.totalSavings(for: goal), specifier: "%.2f")").bold()
+                                    VStack(alignment: .leading){
+                                        if goalsVm.totalSavings(for: goal) != goal.targetAmount && completed == false {
+                                            HStack{
+                                                Text("Remainig")
+                                                
+                                                Text("$\(goal.targetAmount - goalsVm.totalSavings(for: goal), specifier: "%.2f")").bold()
+                                            }
+                                            Text("Keep going, you're making progress!")
+                                                .font(.subheadline)
+                                                .foregroundColor(.gray)
                                         } else {
                                             
-                                            Text("Congratulation").foregroundStyle(.green)
-                                            Image(systemName: "party.popper")
+                                            Text("🎉 Goal achieved! Great job!")
+                                                .font(.subheadline)
+                                                .foregroundColor(.green)
+                                            
                                             
                                         }
+                                    }
+                                    
+                                    if isForEdit {
+                                        VStack(alignment: .leading, spacing: 10) {
+                                            Toggle(isOn: $completed) {
+                                                HStack {
+                                                    Image(systemName: completed ? "checkmark.circle.fill" : "circle")
+                                                        .foregroundColor(completed ? .green : .gray)
+                                                    Text(completed ? "Completed" : "Mark as Completed")
+                                                        .font(.headline)
+                                                }
+                                            }
+                                            .toggleStyle(SwitchToggleStyle(tint: Color("buttonPrimary")))
+                                            
+                                        }
+                                        .padding()
+                                        .background(Color(.systemBackground))
+                                        .cornerRadius(16)
+                                        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
                                     }
                                 }
                             }
@@ -137,6 +165,7 @@ struct NewGoalView: View {
                         .cornerRadius(16)
                 }
                 .disabled(!isFormValid())
+               
                 
             } .navigationTitle(isForEdit ? "Edit Goal":"New Goal")
                 .navigationBarTitleDisplayMode(.inline)
@@ -148,6 +177,7 @@ struct NewGoalView: View {
                         note = goalForEdit?.note ?? ""
                         date = goalForEdit?.date ?? Date()
                         targetAmount = String(goalForEdit?.targetAmount ?? 0)
+                        completed = goalForEdit?.completed ?? false
                         if let goal = goalForEdit {
                             currentAmount = goalsVm.totalSavings(for: goal)
                         }
@@ -247,6 +277,7 @@ struct NewGoalView: View {
             goal.note = note
             goal.currentAmount = 0
             goal.name = name
+            goal.completed = completed
             
             
             

@@ -27,14 +27,24 @@ struct GoalCellView: View {
                 
                 Text("Date Started\n\(goal.date ?? Date(), style: .date)").font(.footnote)
                     .multilineTextAlignment(.leading)
-                HStack{
-                    if goalsVm.totalSavings(for: goal) != goal.targetAmount {
-                        Text("Remainig")
-                        Text("$\(goal.targetAmount - goalsVm.totalSavings(for: goal), specifier: "%.2f")").bold()
+                VStack(alignment: .leading){
+                    if goalsVm.totalSavings(for: goal) != goal.targetAmount && goal.completed == false {
+                        HStack{
+                            Text("Remainig")
+                            
+                            Text("$\(goal.targetAmount - goalsVm.totalSavings(for: goal), specifier: "%.2f")").bold()
+                        }
+                        Text("Keep going, you're making progress!")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                            
                     } else {
                     
-                        Text("Congratulation").foregroundStyle(.green)
-                        Image(systemName: "party.popper")
+                      
+                            Text("🎉 Goal achieved! Great job!")
+                                .font(.subheadline)
+                                .foregroundColor(.green)
+                       
                         
                     }
                   
@@ -52,24 +62,24 @@ struct GoalCellView: View {
             }
             Spacer()
             ZStack {
-                Circle()
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 10) // Background circle
-                    .frame(width: 80, height: 80)
-                
-                Circle()
-                    .trim(from: 0.0, to: CGFloat(min(progress, 1.0)))
-                    .stroke(Color("buttonPrimary"), lineWidth: 10) // Progress circle
-                    .frame(width: 80, height: 80)
-                    .rotationEffect(Angle(degrees: -90)) // Rotate circle to start from top
-                    .padding()
-                    .overlay(
-                        Text("\(Int(progress * 100))%") // Display progress percentage
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                    )
-                    .animation(.easeInOut, value: progress) // Animation for progress change
-            }
+                        Circle()
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 10)
+                            .frame(width: 80, height: 80)
+                        
+                        Circle()
+                    .trim(from: 0.0, to: CGFloat(min(goal.completed ? 1.0 : progress, 1.0)))
+                            .stroke(Color("buttonPrimary"), lineWidth: 10)
+                            .frame(width: 80, height: 80)
+                            .rotationEffect(Angle(degrees: -90))
+                            .padding()
+                            .overlay(
+                                Text(goal.completed ? "100%" : "\(Int(progress * 100))%")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                            )
+                            .animation(.easeInOut, value: progress)
+                    }
             
             
         }

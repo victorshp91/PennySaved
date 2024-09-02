@@ -9,6 +9,8 @@ enum GoalSortOption: String, CaseIterable, Identifiable {
     case dateDesc = "Date ↓"
     case remainingAsc = "Remaining ↑"
     case remainingDesc = "Remaining ↓"
+    case completedFirst = "Completed First"
+    case incompleteFirst = "Incomplete First"
 
     var id: String { self.rawValue }
 }
@@ -28,11 +30,12 @@ struct GoalsListView: View {
     private func sortedGoals() -> [Goals] {
         var sortedGoals = goalsVm.goals
 
-        // Filtrar goals con remain 0 si isForSelect es true
+        // Aplicar filtros solo si isForSelect es true
         if isForSelect {
             sortedGoals = sortedGoals.filter { goal in
+                let isNotCompleted = !goal.completed
                 let totalSavings = goalsVm.totalSavings(for: goal)
-                return totalSavings < goal.targetAmount
+                return isNotCompleted && totalSavings < goal.targetAmount
             }
         }
 
@@ -58,6 +61,10 @@ struct GoalsListView: View {
             sortedGoals.sort {
                 (($0.targetAmount - goalsVm.totalSavings(for: $0)) > ($1.targetAmount - goalsVm.totalSavings(for: $1)))
             }
+        case .completedFirst:
+            sortedGoals.sort { $0.completed && !$1.completed }
+        case .incompleteFirst:
+            sortedGoals.sort { !$0.completed && $1.completed }
         }
 
         // Aplicar filtro de búsqueda
