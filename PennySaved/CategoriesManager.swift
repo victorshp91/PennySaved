@@ -9,9 +9,26 @@ import CoreData
 import Foundation
 
 class CategoryManager {
-    static let shared = CategoryManager()
+    static let shared = CategoryManager(viewContext: PersistenceController.shared.container.viewContext)
+      private let viewContext: NSManagedObjectContext
+      private let userDefaults = UserDefaults.standard
+      private let lastFetchDateKey = "lastCategoryFetchDate"
+      private let fetchIntervalInDays = 1 // Fetch new data every day
 
-    private init() {}
+      init(viewContext: NSManagedObjectContext) {
+          self.viewContext = viewContext
+          if shouldFetchCategories() {
+              fetchAndUpdateCategories(context: viewContext)
+          }
+      }
+
+    private func shouldFetchCategories() -> Bool {
+        if let lastFetchDate = userDefaults.object(forKey: lastFetchDateKey) as? Date {
+            let daysSinceLastFetch = Calendar.current.dateComponents([.day], from: lastFetchDate, to: Date()).day ?? 0
+            return daysSinceLastFetch >= fetchIntervalInDays
+        }
+        return true // Fetch if we've never fetched before
+    }
 
     func fetchCategoriesFromURL(completion: @escaping ([[String: String]]?) -> Void) {
         guard let url = URL(string: "https://rayjewelry.us/savings/categories.json") else {
@@ -49,68 +66,57 @@ class CategoryManager {
     }
 
     func saveCategoriesToCoreData(_ categories: [[String: String]], context: NSManagedObjectContext) {
-        let fetchRequest: NSFetchRequest<Category> = Category.fetchRequest()
+        context.performAndWait {
+            do {
+                for categoryData in categories {
+                    guard let name = categoryData["name"],
+                          let icon = categoryData["icon"],
+                          let color = categoryData["color"] else {
+                        print("Invalid category data: \(categoryData)")
+                        continue
+                    }
 
-        do {
-            let existingCategories = try context.fetch(fetchRequest)
-            var existingCategoriesDict = [String: Category]()
-            
-            for category in existingCategories {
-                if let name = category.name {
-                    existingCategoriesDict[name] = category
+                    // Try to fetch existing category
+                    let fetchRequest: NSFetchRequest<Category> = Category.fetchRequest()
+                    fetchRequest.predicate = NSPredicate(format: "name == %@", name)
+                    let existingCategories = try context.fetch(fetchRequest)
+
+                    let category: Category
+                    if let existingCategory = existingCategories.first {
+                        // Update existing category
+                        category = existingCategory
+                    } else {
+                        // Create new category if it doesn't exist
+                        category = Category(context: context)
+                        category.name = name
+                    }
+
+                    // Update or set icon and color
+                    category.icon = icon
+                    category.color = color
+
+                    print("Updated/Added category: \(name)")
                 }
-            }
 
-            for categoryData in categories {
-                guard let name = categoryData["name"],
-                      let icon = categoryData["icon"],
-                      let color = categoryData["color"] else {
-                          print("Invalid category data: \(categoryData)")
-                          continue
-                      }
-
-                if let existingCategory = existingCategoriesDict[name] {
-                    // Check if any attributes are different
-                    var needsUpdate = false
-                    
-                    if existingCategory.icon != icon {
-                        existingCategory.icon = icon
-                        needsUpdate = true
+                // Delete categories that are not in the new data
+                let allCategories = try context.fetch(Category.fetchRequest())
+                let newCategoryNames = Set(categories.compactMap { $0["name"] })
+                for existingCategory in allCategories {
+                    if let name = existingCategory.name, !newCategoryNames.contains(name) {
+                        context.delete(existingCategory)
+                        print("Deleted category: \(name)")
                     }
-                    
-                    if existingCategory.color != color {
-                        existingCategory.color = color
-                        needsUpdate = true
-                    }
-                    
-                    if needsUpdate {
-                        print("Updated category: \(name)")
-                    }
-
-                } else {
-                    // Add a new category
-                    let newCategory = Category(context: context)
-                    newCategory.id = UUID()
-                    newCategory.name = name
-                    newCategory.icon = icon
-                    newCategory.color = color
-                    print("Added new category: \(name)")
                 }
-            }
 
-            // Delete categories that are not in the new JSON
-            let newCategoryNames = Set(categories.compactMap { $0["name"] })
-            for existingCategory in existingCategories where !newCategoryNames.contains(existingCategory.name ?? "") {
-                context.delete(existingCategory)
-                print("Deleted category: \(existingCategory.name ?? "Unknown")")
+                try context.save()
+                userDefaults.set(Date(), forKey: lastFetchDateKey)
+                print("Categories successfully saved to CoreData.")
+            } catch {
+                print("Error saving to CoreData: \(error)")
             }
-
-            try context.save()
-            print("Categories successfully saved to CoreData.")
-        } catch {
-            print("Error saving to CoreData: \(error)")
         }
     }
+
 
     func fetchAndUpdateCategories(context: NSManagedObjectContext) {
         fetchCategoriesFromURL { categories in
@@ -122,5 +128,25 @@ class CategoryManager {
                 self.saveCategoriesToCoreData(categories, context: context)
             }
         }
+    }
+
+    func getLocalCategories() -> [Category] {
+        let fetchRequest: NSFetchRequest<Category> = Category.fetchRequest()
+        
+        // Add a sort descriptor to order by name
+        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        do {
+            return try viewContext.fetch(fetchRequest)
+        } catch {
+            print("Error fetching local categories: \(error)")
+            return []
+        }
+    }
+
+
+    func forceFetchCategories() {
+        fetchAndUpdateCategories(context: viewContext)
     }
 }

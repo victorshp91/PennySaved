@@ -27,6 +27,7 @@
 		F2768B472C7051E400179B04 /* GoalsVm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B462C7051E400179B04 /* GoalsVm.swift */; };
 		F2768B492C70D2E700179B04 /* SavingsVm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B482C70D2E700179B04 /* SavingsVm.swift */; };
 		F2768B4B2C7ACC5400179B04 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2768B4A2C7ACC5400179B04 /* Launch Screen.storyboard */; };
+		F29954CB2C829796002CC833 /* OnBoardingScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29954CA2C829796002CC833 /* OnBoardingScreenView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,7 @@
 		F2768B462C7051E400179B04 /* GoalsVm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsVm.swift; sourceTree = "<group>"; };
 		F2768B482C70D2E700179B04 /* SavingsVm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavingsVm.swift; sourceTree = "<group>"; };
 		F2768B4A2C7ACC5400179B04 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		F29954CA2C829796002CC833 /* OnBoardingScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingScreenView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 				F2768B302C6AEF7700179B04 /* NewSavingView.swift */,
 				F2768B442C704A5900179B04 /* GoalsListView.swift */,
 				F2768B362C6B875400179B04 /* savigsListView.swift */,
+				F29954CA2C829796002CC833 /* OnBoardingScreenView.swift */,
 				F2768B402C6F81FE00179B04 /* GoalCellView.swift */,
 				F2768B482C70D2E700179B04 /* SavingsVm.swift */,
 				F2768B342C6B0A2600179B04 /* CalculatorView.swift */,
@@ -199,6 +202,7 @@
 				F2768B1C2C6ADEEE00179B04 /* PennySavedApp.swift in Sources */,
 				F2768B372C6B875400179B04 /* savigsListView.swift in Sources */,
 				F2768B212C6ADEEE00179B04 /* PennySaved.xcdatamodeld in Sources */,
+				F29954CB2C829796002CC833 /* OnBoardingScreenView.swift in Sources */,
 				F2768B492C70D2E700179B04 /* SavingsVm.swift in Sources */,
 				F2768B232C6ADEEE00179B04 /* ContentView.swift in Sources */,
 				F2768B3F2C6F7D4000179B04 /* SearchBarView.swift in Sources */,

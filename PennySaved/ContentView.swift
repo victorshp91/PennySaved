@@ -13,7 +13,7 @@ struct ContentView: View {
     
     @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
     @EnvironmentObject var savingsVm: SavingsVm  // Access the SavingsVm instance
-    
+    @AppStorage("showOnBoardingScreen") var showOnBoardingScreen = true
     
     
     var today: Date {
@@ -84,8 +84,19 @@ struct ContentView: View {
                         .frame(height: 40)
                         .padding(.horizontal, 15)
                     // PROFILE HEADER
-                    ScrollView(.horizontal) {
+                    ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
+                            NavigationLink(destination: savigsListView(saving: savingsVm.savings)) {
+                                HStack {
+                                    Text("View All ThinkTwiceSave")
+                                    Image(systemName: "list.bullet")
+                                }
+                                .padding()
+                                .background(Color("buttonPrimary"))
+                                .foregroundStyle(.black)
+                                .cornerRadius(50)
+                            }
+                            
                             NavigationLink(destination: NewSavingView()) {
                                 HStack{
                                     Text("New ThinkTwiceSave")
@@ -203,17 +214,7 @@ struct ContentView: View {
                     HStack {
                         Text("Today").foregroundStyle(.white)
                         Spacer()
-                        NavigationLink(destination: savigsListView(saving: savingsVm.savings)) {
-                            HStack {
-                                Spacer()
-                                Text("View All")
-                                Image(systemName: "arrow.forward.circle.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                            }
-                            .foregroundStyle(Color("buttonPrimary"))
-                            .frame(maxWidth:.infinity, maxHeight: 25)
-                        }
+                        
                         
                     }.padding(.horizontal, 15)
                     if !savingsToday.isEmpty {
@@ -243,6 +244,10 @@ struct ContentView: View {
                     
                 }
                 Spacer()
+            }.sheet(isPresented: $showOnBoardingScreen){
+                
+                OnboardingScreen(showOnBoardingScreen: $showOnBoardingScreen)
+                    .presentationDetents([.large])
             }
            
             

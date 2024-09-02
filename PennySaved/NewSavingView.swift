@@ -186,7 +186,7 @@ struct NewSavingView: View {
                     selectedGoal = savingForEdit?.goal
                 }
             })
-        }
+        }.scrollDismissesKeyboard(.immediately)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color("bg"))
         .toolbar {

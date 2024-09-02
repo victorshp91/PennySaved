@@ -155,7 +155,8 @@ struct NewGoalView: View {
                 })
 
             
-        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+        }.scrollDismissesKeyboard(.immediately)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("bg"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

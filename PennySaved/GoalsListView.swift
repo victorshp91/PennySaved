@@ -7,7 +7,9 @@ enum GoalSortOption: String, CaseIterable, Identifiable {
     case nameDesc = "Name Z-A"
     case dateAsc = "Date ↑"
     case dateDesc = "Date ↓"
-    
+    case remainingAsc = "Remaining ↑"
+    case remainingDesc = "Remaining ↓"
+
     var id: String { self.rawValue }
 }
 
@@ -19,13 +21,13 @@ struct GoalsListView: View {
     @State var firstGoal: Goals?
     @State var donePressed = false
     @State var saving: Saving?
-    
+
     @State private var selectedSortOption: GoalSortOption = .dateDesc
     @State private var searchText = ""
-    
+
     private func sortedGoals() -> [Goals] {
         var sortedGoals = goalsVm.goals
-        
+
         // Filtrar goals con remain 0 si isForSelect es true
         if isForSelect {
             sortedGoals = sortedGoals.filter { goal in
@@ -33,7 +35,7 @@ struct GoalsListView: View {
                 return totalSavings < goal.targetAmount
             }
         }
-        
+
         // Aplicar ordenación
         switch selectedSortOption {
         case .targetAsc:
@@ -48,50 +50,58 @@ struct GoalsListView: View {
             sortedGoals.sort { $0.date ?? Date() < $1.date ?? Date() }
         case .dateDesc:
             sortedGoals.sort { $0.date ?? Date() > $1.date ?? Date() }
+        case .remainingAsc:
+            sortedGoals.sort {
+                (($0.targetAmount - goalsVm.totalSavings(for: $0)) < ($1.targetAmount - goalsVm.totalSavings(for: $1)))
+            }
+        case .remainingDesc:
+            sortedGoals.sort {
+                (($0.targetAmount - goalsVm.totalSavings(for: $0)) > ($1.targetAmount - goalsVm.totalSavings(for: $1)))
+            }
         }
-        
+
         // Aplicar filtro de búsqueda
         sortedGoals = sortedGoals.filter { goal in
             searchText.isEmpty || goal.name?.localizedCaseInsensitiveContains(searchText) == true
         }
-        
+
         // Mover el selectedGoal al principio si existe
         if let selectedGoal = selectedGoal,
            let index = sortedGoals.firstIndex(of: selectedGoal) {
             sortedGoals.move(fromOffsets: IndexSet(integer: index), toOffset: 0)
         }
-        
+
         return sortedGoals
     }
-    
+
     var body: some View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 10) {
                     SearchBarView(searchingText: $searchText, searchBoxDefaultText: "ThinkTwiceSave Goal Name")
                         .padding(.horizontal, 15)
-                    
+
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
                             Picker("Sort by", selection: $selectedSortOption) {
-                                        ForEach(0..<GoalSortOption.allCases.count, id: \.self) { index in
-                                            let option = GoalSortOption.allCases[index]
-                                            Text(option.rawValue).tag(option)
-                                            
-                                            // Add a divider every two options
-                                            if index % 2 == 1 && index < GoalSortOption.allCases.count - 1 {
-                                                Divider()
-                                            }
-                                        }
-                                    }
-                                    .pickerStyle(.menu)
+                                                                   ForEach(0..<GoalSortOption.allCases.count, id: \.self) { index in
+                                                                       let option = GoalSortOption.allCases[index]
+                                                                       Text(option.rawValue).tag(option)
+                                                                       
+                                                                       // Add a divider every two options
+                                                                       if index % 2 == 1 && index < GoalSortOption.allCases.count - 1 {
+                                                                           Divider()
+                                                                       }
+                                                                   }
+                                                               }
+                                                               .pickerStyle(.menu)
                             .padding(5)
                             .background(Color("boxesBg"))
                             .cornerRadius(16)
                         }
                         .padding(.horizontal, 15)
                     }
-                    
+
                     if sortedGoals().isEmpty {
                         ContentUnavailableView("No Goal found matching your search", systemImage: "magnifyingglass.circle.fill")
                     } else {
@@ -128,7 +138,7 @@ struct GoalsListView: View {
                         selectedGoal = firstGoal
                     }
                 })
-            }
+            }.scrollDismissesKeyboard(.immediately)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("bg"))
             .toolbar {

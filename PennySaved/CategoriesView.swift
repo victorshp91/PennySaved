@@ -10,9 +10,9 @@ import CoreData
 
 struct CategoryView: View {
     @FetchRequest(
-        entity: Category.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \Category.name, ascending: true)]
-    ) var categories: FetchedResults<Category>
+           entity: Category.entity(),
+           sortDescriptors: [NSSortDescriptor(keyPath: \Category.name, ascending: true)]
+       ) var categories: FetchedResults<Category>
 
     @Binding var category: Category?
     @Environment(\.presentationMode) var presentationMode
@@ -58,8 +58,14 @@ struct CategoryView: View {
                 }
             }
             .padding()
+            
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("bg"))
+            .scrollDismissesKeyboard(.immediately)
+            .onAppear(perform: {
+                CategoryManager.shared.forceFetchCategories()
+                
+            })
     }
 }
 

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 @main
 struct PennySavedApp: App {
     let persistenceController = PersistenceController.shared
@@ -28,24 +29,21 @@ struct PennySavedApp: App {
                     .environmentObject(savingsVm)
                     .preferredColorScheme(.dark)
                     .tint(.white)
-                    .onAppear {
-                        CategoryManager.shared.fetchAndUpdateCategories(context: persistenceController.container.viewContext)
-                    }
+                   
             }
         }
     }
-    
+
     private func setupCloudKitSyncObserver() {
-        // Listen for changes in Core Data that indicate a CloudKit sync
         NotificationCenter.default.addObserver(forName: .NSPersistentStoreRemoteChange, object: nil, queue: .main) { _ in
-            // Handle the sync completion
             self.isLoading = false
+          
         }
 
-        // Optionally, you might want to add a timeout in case the sync takes too long.
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
             if self.isLoading {
-                self.isLoading = false // Hide loading view after timeout
+                self.isLoading = false
+                
             }
         }
     }

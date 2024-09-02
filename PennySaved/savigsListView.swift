@@ -123,7 +123,7 @@ struct savigsListView: View {
                             // Picker for Selecting Category
                             Picker("Select Category", selection: $selectedCategory) {
                                 Text("All Categories").tag(Category?.none) // Optional, to show all categories
-                                ForEach(categories) { category in
+                                ForEach(categories, id: \.name) { category in
                                     HStack(spacing: 10) {
                                         Image(systemName: "\(category.icon ?? "questionmark")")
                                         Text(category.name ?? "Unknown").tag(category as Category?)
@@ -166,6 +166,7 @@ struct savigsListView: View {
                     .padding(.top)
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color("bg"))
+                .scrollDismissesKeyboard(.immediately)
         }
     }
 }
