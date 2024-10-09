@@ -60,4 +60,8 @@ class GoalsVm: ObservableObject {
         let savings = goal.saving?.allObjects as? [Saving]
         return savings?.reduce(0) { $0 + ($1.amount) } ?? 0
     }
+    
+    var goalCount: Int {
+        return goals.count
+    }
 }

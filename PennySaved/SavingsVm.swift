@@ -16,6 +16,9 @@ class SavingsVm: ObservableObject {
     @Published var savings: [Saving] = []
     static let shared = SavingsVm(viewContext: PersistenceController.shared.container.viewContext)
     
+    var savingsCount: Int {
+        return savings.count
+    }
     
     init(viewContext: NSManagedObjectContext) {
           self.viewContext = viewContext

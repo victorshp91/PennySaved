@@ -14,7 +14,10 @@ struct ContentView: View {
     @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
     @EnvironmentObject var savingsVm: SavingsVm  // Access the SavingsVm instance
     @AppStorage("showOnBoardingScreen") var showOnBoardingScreen = true
-    
+    @State private var showInfoSheet = false  // Add this line
+    @State private var showSubscriptionView = false
+    @State private var showNewGoalView = false
+    @State private var showNewSavingView = false
     
     var today: Date {
         Calendar.current.startOfDay(for: Date())
@@ -97,7 +100,7 @@ struct ContentView: View {
                                 .cornerRadius(50)
                             }
                             
-                            NavigationLink(destination: NewSavingView()) {
+                            Button(action: handleNewSavingTap) {
                                 HStack{
                                     Text("New ThinkTwiceSave")
                                     Image(systemName: "plus")
@@ -108,15 +111,15 @@ struct ContentView: View {
                                     .cornerRadius(50)
                                 
                             }
-                            NavigationLink(destination: NewGoalView()) {
-                                HStack{
+                            Button(action: handleNewGoalTap) {
+                                HStack {
                                     Text("New Goal")
                                     Image(systemName: "plus")
-                                    
-                                }.padding()
-                                    .background(Color("buttonPrimary"))
-                                    .foregroundStyle(.black)
-                                    .cornerRadius(50)
+                                }
+                                .padding()
+                                .background(Color("buttonPrimary"))
+                                .foregroundStyle(.black)
+                                .cornerRadius(50)
                             }
                         } .font(.headline).bold()
                             .padding(.horizontal, 15)
@@ -254,19 +257,27 @@ struct ContentView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("bg"))
             .toolbar {
-          
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: {
-                            print("")
-                        }) {
-                            Image(systemName: "info.circle.fill")
-                                .foregroundStyle(Color("buttonPrimary"))
-                        }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        showInfoSheet = true  // Update this line
+                    }) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundStyle(Color("buttonPrimary"))
                     }
-                    
-                
+                }
             }
-            
+            .sheet(isPresented: $showInfoSheet) {
+                InfoSheetView()
+            }
+            .sheet(isPresented: $showSubscriptionView) {
+                SubscriptionView()
+            }
+            .sheet(isPresented: $showNewGoalView) {
+                NewGoalView()
+            }
+            .sheet(isPresented: $showNewSavingView) {
+                NewSavingView()
+            }
         }
     }
     
@@ -348,6 +359,22 @@ struct ContentView: View {
         
         
         
+    }
+    
+    private func handleNewGoalTap() {
+        if goalsVm.goalCount >= 3 {
+            showSubscriptionView = true
+        } else {
+            showNewGoalView = true
+        }
+    }
+    
+    private func handleNewSavingTap() {
+        if savingsVm.savingsCount >= 10 {
+            showSubscriptionView = true
+        } else {
+            showNewSavingView = true
+        }
     }
 }
 

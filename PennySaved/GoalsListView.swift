@@ -15,6 +15,14 @@ enum GoalSortOption: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
+enum GoalCompletionFilter: String, CaseIterable, Identifiable {
+    case all = "All Goals"
+    case completed = "Completed"
+    case incomplete = "Incomplete"
+    
+    var id: String { self.rawValue }
+}
+
 struct GoalsListView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var goalsVm: GoalsVm
@@ -26,9 +34,22 @@ struct GoalsListView: View {
 
     @State private var selectedSortOption: GoalSortOption = .dateDesc
     @State private var searchText = ""
+    @State private var completionFilter: GoalCompletionFilter = .all
 
     private func sortedGoals() -> [Goals] {
         var sortedGoals = goalsVm.goals
+
+        // Filter based on completion status
+        sortedGoals = sortedGoals.filter { goal in
+            switch completionFilter {
+            case .all:
+                return true
+            case .completed:
+                return goal.completed
+            case .incomplete:
+                return !goal.completed
+            }
+        }
 
         // Aplicar filtros solo si isForSelect es true
         if isForSelect {
@@ -89,19 +110,29 @@ struct GoalsListView: View {
                         .padding(.horizontal, 15)
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
+                        HStack(spacing: 10) {
                             Picker("Sort by", selection: $selectedSortOption) {
-                                                                   ForEach(0..<GoalSortOption.allCases.count, id: \.self) { index in
-                                                                       let option = GoalSortOption.allCases[index]
-                                                                       Text(option.rawValue).tag(option)
-                                                                       
-                                                                       // Add a divider every two options
-                                                                       if index % 2 == 1 && index < GoalSortOption.allCases.count - 1 {
-                                                                           Divider()
-                                                                       }
-                                                                   }
-                                                               }
-                                                               .pickerStyle(.menu)
+                                ForEach(0..<GoalSortOption.allCases.count, id: \.self) { index in
+                                    let option = GoalSortOption.allCases[index]
+                                    Text(option.rawValue).tag(option)
+                                    
+                                    // Add a divider every two options
+                                    if index % 2 == 1 && index < GoalSortOption.allCases.count - 1 {
+                                        Divider()
+                                    }
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .padding(5)
+                            .background(Color("boxesBg"))
+                            .cornerRadius(16)
+
+                            Picker("Show", selection: $completionFilter) {
+                                ForEach(GoalCompletionFilter.allCases) { filter in
+                                    Text(filter.rawValue).tag(filter)
+                                }
+                            }
+                            .pickerStyle(.menu)
                             .padding(5)
                             .background(Color("boxesBg"))
                             .cornerRadius(16)

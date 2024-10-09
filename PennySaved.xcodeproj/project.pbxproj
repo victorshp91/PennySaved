@@ -28,6 +28,8 @@
 		F2768B492C70D2E700179B04 /* SavingsVm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B482C70D2E700179B04 /* SavingsVm.swift */; };
 		F2768B4B2C7ACC5400179B04 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2768B4A2C7ACC5400179B04 /* Launch Screen.storyboard */; };
 		F29954CB2C829796002CC833 /* OnBoardingScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29954CA2C829796002CC833 /* OnBoardingScreenView.swift */; };
+		F2AA55D32CB627D400812224 /* infoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AA55D22CB627CF00812224 /* infoSheet.swift */; };
+		F2AA55D72CB62C1C00812224 /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AA55D62CB62C1C00812224 /* SubscriptionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +57,8 @@
 		F2768B482C70D2E700179B04 /* SavingsVm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavingsVm.swift; sourceTree = "<group>"; };
 		F2768B4A2C7ACC5400179B04 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		F29954CA2C829796002CC833 /* OnBoardingScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingScreenView.swift; sourceTree = "<group>"; };
+		F2AA55D22CB627CF00812224 /* infoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = infoSheet.swift; sourceTree = "<group>"; };
+		F2AA55D62CB62C1C00812224 /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +96,7 @@
 				F26602382C7ADEB50078743A /* LoadingAppView.swift */,
 				F2768B1D2C6ADEEE00179B04 /* Persistence.swift */,
 				F2768B222C6ADEEE00179B04 /* ContentView.swift */,
+				F2AA55D22CB627CF00812224 /* infoSheet.swift */,
 				F2768B462C7051E400179B04 /* GoalsVm.swift */,
 				F2768B422C6F876D00179B04 /* NewGoalView.swift */,
 				F2768B302C6AEF7700179B04 /* NewSavingView.swift */,
@@ -100,6 +105,7 @@
 				F29954CA2C829796002CC833 /* OnBoardingScreenView.swift */,
 				F2768B402C6F81FE00179B04 /* GoalCellView.swift */,
 				F2768B482C70D2E700179B04 /* SavingsVm.swift */,
+				F2AA55D62CB62C1C00812224 /* SubscriptionView.swift */,
 				F2768B342C6B0A2600179B04 /* CalculatorView.swift */,
 				F2768B322C6AF98B00179B04 /* savingTransactionCellView.swift */,
 				F2768B3E2C6F7D4000179B04 /* SearchBarView.swift */,
@@ -150,7 +156,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1540;
-				LastUpgradeCheck = 1540;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					F2768B172C6ADEEE00179B04 = {
 						CreatedOnToolsVersion = 15.4;
@@ -203,8 +209,10 @@
 				F2768B372C6B875400179B04 /* savigsListView.swift in Sources */,
 				F2768B212C6ADEEE00179B04 /* PennySaved.xcdatamodeld in Sources */,
 				F29954CB2C829796002CC833 /* OnBoardingScreenView.swift in Sources */,
+				F2AA55D32CB627D400812224 /* infoSheet.swift in Sources */,
 				F2768B492C70D2E700179B04 /* SavingsVm.swift in Sources */,
 				F2768B232C6ADEEE00179B04 /* ContentView.swift in Sources */,
+				F2AA55D72CB62C1C00812224 /* SubscriptionView.swift in Sources */,
 				F2768B3F2C6F7D4000179B04 /* SearchBarView.swift in Sources */,
 				F2768B1E2C6ADEEE00179B04 /* Persistence.swift in Sources */,
 				F2768B3B2C6B966000179B04 /* CategoriesView.swift in Sources */,
@@ -251,6 +259,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -312,6 +321,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -340,6 +350,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"PennySaved/Preview Content\"";
 				DEVELOPMENT_TEAM = 8SB327NDUL;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -386,6 +397,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"PennySaved/Preview Content\"";
 				DEVELOPMENT_TEAM = 8SB327NDUL;
 				ENABLE_HARDENED_RUNTIME = YES;

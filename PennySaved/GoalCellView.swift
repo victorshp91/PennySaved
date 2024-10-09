@@ -27,6 +27,12 @@ struct GoalCellView: View {
                 
                 Text("Date Started\n\(goal.date ?? Date(), style: .date)").font(.footnote)
                     .multilineTextAlignment(.leading)
+                
+                // Add target amount here
+                Text("Target: $\(goal.targetAmount, specifier: "%.2f")")
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                
                 VStack(alignment: .leading){
                     if goalsVm.totalSavings(for: goal) != goal.targetAmount && goal.completed == false {
                         HStack{
@@ -73,10 +79,12 @@ struct GoalCellView: View {
                             .rotationEffect(Angle(degrees: -90))
                             .padding()
                             .overlay(
-                                Text(goal.completed ? "100%" : "\(Int(progress * 100))%")
+                                Text(goal.completed ? "100%" : String(format: "%.0f%%", progress * 100))
                                     .font(.subheadline)
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
+
+
                             )
                             .animation(.easeInOut, value: progress)
                     }
