@@ -29,6 +29,8 @@ class GoalsVm: ObservableObject {
         fetchGols()
     }
     
+    
+    
     @objc private func cloudKitDataChanged() {
         // Whenever CloudKit data changes, re-fetch the goals
         fetchGols()

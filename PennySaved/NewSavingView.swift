@@ -23,7 +23,7 @@ struct NewSavingView: View {
     @State  var isForEdit = false
     @State  var savingForEdit: Saving?
     
-    @State private var errorMessage: String = ""
+   
     @State private var showDeleteAlert = false
     
     var body: some View {

@@ -370,7 +370,7 @@ struct ContentView: View {
     }
     
     private func handleNewSavingTap() {
-        if savingsVm.savingsCount >= 10 {
+        if savingsVm.savingsCount >= 5 {
             showSubscriptionView = true
         } else {
             showNewSavingView = true

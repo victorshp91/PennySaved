@@ -23,7 +23,10 @@ struct NewGoalView: View {
     @State private var currentAmount = 0.0
     @State private var date = Date()
     @State private var completed = false
+ 
+
     var body: some View {
+        let validationResult = validateForm()
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 20) {
                 
@@ -76,11 +79,12 @@ struct NewGoalView: View {
                                         
                                     }
                                     VStack(alignment: .leading){
-                                        if goalsVm.totalSavings(for: goal) != goal.targetAmount && completed == false {
+                                        let remainingAmount = goal.targetAmount - goalsVm.totalSavings(for: goal)
+                                        if remainingAmount > 0 && !completed {
                                             HStack{
-                                                Text("Remainig")
+                                                Text("Remaining")
                                                 
-                                                Text("$\(goal.targetAmount - goalsVm.totalSavings(for: goal), specifier: "%.2f")").bold()
+                                                Text("$\(remainingAmount, specifier: "%.2f")").bold()
                                             }
                                             Text("Keep going, you're making progress!")
                                                 .font(.subheadline)
@@ -95,7 +99,7 @@ struct NewGoalView: View {
                                         }
                                     }
                                     
-                                    if isForEdit {
+                                    if isForEdit && goal.targetAmount < Double(targetAmount) ?? 0.0{
                                         VStack(alignment: .leading, spacing: 10) {
                                             Toggle(isOn: $completed) {
                                                 HStack {
@@ -106,7 +110,11 @@ struct NewGoalView: View {
                                                 }
                                             }
                                             .toggleStyle(SwitchToggleStyle(tint: Color("buttonPrimary")))
-                                            
+                                            .onChange(of: goalsVm.totalSavings(for: goal)) { 
+                                                if goalsVm.totalSavings(for: goal) >= goal.targetAmount {
+                                                    completed = true
+                                                }
+                                            }
                                         }
                                         .padding()
                                         .background(Color(.systemBackground))
@@ -147,24 +155,33 @@ struct NewGoalView: View {
                     .background(Color("boxesBg"))
                     .cornerRadius(16)
                 
+                // Mostrar el mensaje de error
+                if let errorMessage = validationResult.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .padding()
+                }
+
                 // BOTÓN "GUARDAR"
                 Button(action: {
-                    if isForEdit {
-                        updateGoal()
-                    }else {
-                        // Acción para guardar el ahorro
-                        saveGoal()
+                    
+                    if validationResult.isValid {
+                        if isForEdit {
+                            updateGoal()
+                        } else {
+                            saveGoal()
+                        }
                     }
                 }) {
                     Text("Save Goal")
                         .font(.headline)
-                        .foregroundColor(isFormValid() ? .black : Color.white)
+                        .foregroundColor(validateForm().isValid ? .black : Color.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(isFormValid() ? Color("buttonPrimary") : Color.gray)
+                        .background(validateForm().isValid ? Color("buttonPrimary") : Color.gray)
                         .cornerRadius(16)
                 }
-                .disabled(!isFormValid())
+                .disabled(!validateForm().isValid)
                
                 
             } .navigationTitle(isForEdit ? "Edit Goal":"New Goal")
@@ -177,9 +194,9 @@ struct NewGoalView: View {
                         note = goalForEdit?.note ?? ""
                         date = goalForEdit?.date ?? Date()
                         targetAmount = String(goalForEdit?.targetAmount ?? 0)
-                        completed = goalForEdit?.completed ?? false
                         if let goal = goalForEdit {
                             currentAmount = goalsVm.totalSavings(for: goal)
+                            completed = currentAmount >= goal.targetAmount || goal.completed
                         }
                     }
                 })
@@ -246,6 +263,7 @@ struct NewGoalView: View {
         newGoal.note = note
         newGoal.currentAmount = 0
         newGoal.name = name
+        
        
     
         
@@ -271,13 +289,17 @@ struct NewGoalView: View {
             
             
             
-            goal.targetAmount = targetAmount
+            
           
             goal.date = Date()
             goal.note = note
             goal.currentAmount = 0
             goal.name = name
             goal.completed = completed
+            if (targetAmount > goalsVm.totalSavings(for: goal) && !goal.completed ) || goal.targetAmount < targetAmount {
+            goal.completed = false
+            }
+            goal.targetAmount = targetAmount
             
             
             
@@ -291,14 +313,33 @@ struct NewGoalView: View {
         }
     }
     
-    // VALIDACIÓN DEL FORMULARIO
-    private func isFormValid() -> Bool {
-        if let _ = Double(targetAmount), !targetAmount.isEmpty && !name.isEmpty && Double(targetAmount) != 0 &&  Double(targetAmount) ?? 0.0 >= currentAmount{
-            return true
+ 
+
+    private func validateForm() -> ValidationResult {
+        guard let targetAmountDouble = Double(targetAmount), !targetAmount.isEmpty else {
+            return ValidationResult(isValid: false, errorMessage: "Please enter a valid target amount.")
         }
-        return false
+        
+        if targetAmountDouble == 0 {
+            return ValidationResult(isValid: false, errorMessage: "Target amount must be greater than zero.")
+        }
+        
+        if name.isEmpty {
+            return ValidationResult(isValid: false, errorMessage: "Please enter a name for the goal.")
+        }
+        
+        if isForEdit, let goal = goalForEdit {
+            let totalSavings = goalsVm.totalSavings(for: goal)
+            if targetAmountDouble < totalSavings {
+                return ValidationResult(isValid: false, errorMessage: "Target amount cannot be less than the current savings (\(String(format: "%.2f", totalSavings))).")
+            }
+        }
+        
+        return ValidationResult(isValid: true, errorMessage: nil)
     }
 }
+
+
 
 #Preview {
     NewGoalView().preferredColorScheme(.dark)
