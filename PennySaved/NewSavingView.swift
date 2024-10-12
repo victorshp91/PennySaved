@@ -68,7 +68,7 @@ struct NewSavingView: View {
                             .background(Color("buttonPrimary"))
                             .cornerRadius(16)
                     }.sheet(isPresented: $showCategory) {
-                        CategoryView(category: $category)
+                        CategoryView(selectedCategory: $category)
                     }
                 }
                 .padding()

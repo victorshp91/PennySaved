@@ -45,9 +45,9 @@ struct GoalsListView: View {
             case .all:
                 return true
             case .completed:
-                return goal.completed
-            case .incomplete:
                 return !goal.completed
+            case .incomplete:
+                return goal.completed
             }
         }
 
