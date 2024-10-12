@@ -78,28 +78,44 @@ struct NewSavingView: View {
                 // GOAL
                 VStack(alignment: .leading, spacing: 10) {
                     HStack{
-                        VStack(alignment: .leading){
-                            Text("Apply to a Goal").bold()
-                            Text("Optional").font(.footnote).foregroundStyle(.secondary)
-                            Spacer()
+                        VStack(alignment: .leading, spacing: 10){
+                            HStack{
+                                Text("Apply to a Goal").bold()
+                                Text("Optional").font(.footnote).foregroundStyle(.secondary)
+                            }
+                    
                             Text("\(selectedGoal?.name ?? "None")")
+                                .font(.headline).bold()
+                            if selectedGoal != nil{
+                                Button(action: {
+                                    selectedGoal = nil
+                                }) {
+                                    Text("Delete Goal")
+                                        .font(.subheadline)
+                                        .foregroundStyle(Color.red)
+                                       
+                                }
+                            }
+                            Spacer()
                         }
                         Spacer()
-                        Button(action: {
-                            showGoals = true
-                        }) {
-                            Text(selectedGoal != nil ? "Change":"Select")
-                                .font(.headline)
-                                .foregroundStyle(.black)
-                                .padding()
-                            
-                                .background(Color("buttonPrimary"))
-                                .cornerRadius(16)
-                        }.sheet(isPresented: $showGoals) {
-                            GoalsListView(isForSelect: true, selectedGoal: $selectedGoal, saving: savingForEdit)
+                        VStack{
+                            Button(action: {
+                                showGoals = true
+                            }) {
+                                Text(selectedGoal != nil ? "Change":"Select")
+                                    .font(.headline)
+                                    .foregroundStyle(.black)
+                                    .padding()
+                                
+                                    .background(Color("buttonPrimary"))
+                                    .cornerRadius(16)
+                            }.sheet(isPresented: $showGoals) {
+                                GoalsListView(isForSelect: true, selectedGoal: $selectedGoal, saving: savingForEdit)
+                                
+                            }
                            
                         }
-                        
                     }
                 }
                 .padding()
