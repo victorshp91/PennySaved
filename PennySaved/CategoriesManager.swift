@@ -11,6 +11,7 @@ import Foundation
 class CategoryManager {
     static let shared = CategoryManager(viewContext: PersistenceController.shared.container.viewContext)
     private let viewContext: NSManagedObjectContext
+    private let maxFreeCategories = 2
 
     init(viewContext: NSManagedObjectContext) {
         self.viewContext = viewContext
@@ -24,33 +25,7 @@ class CategoryManager {
         ["name": "Clothing", "icon": "tshirt.fill"],
         ["name": "Electronics", "icon": "iphone"],
         ["name": "Health Care", "icon": "bandage.fill"],
-        ["name": "Kids", "icon": "figure.child"],
-        ["name": "Beauty", "icon": "paintbrush.fill"],
-        ["name": "Fitness", "icon": "figure.walk"],
-        ["name": "Automotive", "icon": "car.2.fill"],
-        ["name": "Books", "icon": "book.closed.fill"],
-        ["name": "Movies & TV", "icon": "tv.fill"],
-        ["name": "Music", "icon": "music.note"],
-        ["name": "Restaurants", "icon": "fork.knife.circle.fill"],
-        ["name": "Coffee", "icon": "cup.and.saucer.fill"],
-        ["name": "Bars & Nightlife", "icon": "wineglass.fill"],
-        ["name": "Online Shopping", "icon": "globe"],
-        ["name": "Charity", "icon": "hands.sparkles.fill"],
-        ["name": "Gifts", "icon": "gift.fill"],
-        ["name": "Pets", "icon": "pawprint.fill"],
-        ["name": "Home Improvement", "icon": "hammer.fill"],
-        ["name": "Garden", "icon": "leaf.fill"],
-        ["name": "Cleaning", "icon": "trash.fill"],
-        ["name": "Education", "icon": "graduationcap.fill"],
-        ["name": "Office Supplies", "icon": "paperclip"],
-        ["name": "Sporting Goods", "icon": "sportscourt.fill"],
-        ["name": "Hobbies", "icon": "puzzlepiece.fill"],
-        ["name": "Photography", "icon": "camera.fill"],
-        ["name": "Technology", "icon": "cpu.fill"],
-        ["name": "Crafts", "icon": "scissors"],
-        ["name": "Games", "icon": "gamecontroller.fill"],
-        ["name": "Luxury", "icon": "diamond.fill"],
-        ["name": "Vacation", "icon": "airplane"]
+        ["name": "Transportation", "icon": "car.fill"]
     ]
 
     private func ensurePredefinedCategories() {
@@ -117,5 +92,10 @@ class CategoryManager {
         } catch {
             print("Error deleting custom category: \(error)")
         }
+    }
+
+    func canAddNewCategory() -> Bool {
+        let customCategories = getLocalCategories().filter { !$0.isPredefined }
+        return customCategories.count < maxFreeCategories
     }
 }

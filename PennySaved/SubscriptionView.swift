@@ -9,18 +9,29 @@
 import SwiftUI
 
 struct SubscriptionView: View {
+    let subscriptionPlans: [SubscriptionPlan]
+    
     @State private var selectedPlan: SubscriptionPlan?
     
     let accentColor = Color(hex: "C9F573")
     let backgroundColor = Color(hex: "0B1523")
     let secondaryColor = Color(hex: "212B33")
     
-    let subscriptionPlans = [
-        SubscriptionPlan(name: "Weekly", price: "$1.99", period: "week"),
-        SubscriptionPlan(name: "Monthly", price: "$4.99", period: "month", savings: "37%"),
-        SubscriptionPlan(name: "Annual", price: "$39.99", period: "year", savings: "58%"),
-        SubscriptionPlan(name: "Lifetime", price: "$79.99", period: "one-time", savings: "Best value")
-    ]
+    init() {
+        let weeklyPlan = SubscriptionPlan(name: "Weekly", price: 0.99, period: "week")
+        let monthlyPlan = SubscriptionPlan(name: "Monthly", price: 2.99, period: "month")
+        let annualPlan = SubscriptionPlan(name: "Annual", price: 29.99, period: "year")
+        let lifetimePlan = SubscriptionPlan(name: "Lifetime", price: 49.99, period: "one-time")
+        
+        self.subscriptionPlans = [
+            weeklyPlan,
+            monthlyPlan.withSavings(comparedTo: weeklyPlan),
+            annualPlan.withSavings(comparedTo: weeklyPlan),
+            lifetimePlan.withSavings(comparedTo: weeklyPlan)
+        ]
+        
+        _selectedPlan = State(initialValue: weeklyPlan)
+    }
     
     var body: some View {
         NavigationView {
@@ -38,8 +49,7 @@ struct SubscriptionView: View {
                         FeatureRow(icon: "target", text: "Unlimited financial goals", accentColor: accentColor)
                         FeatureRow(icon: "dollarsign.circle", text: "Unlimited savings tracking", accentColor: accentColor)
                         FeatureRow(icon: "chart.pie.fill", text: "Detailed expense analysis", accentColor: accentColor)
-                        FeatureRow(icon: "bell.badge", text: "Custom alerts and reminders", accentColor: accentColor)
-                        FeatureRow(icon: "icloud.and.arrow.up", text: "Cloud synchronization", accentColor: accentColor)
+                        FeatureRow(icon: "folder.badge.plus", text: "Unlimited custom categories", accentColor: accentColor)
                     }
                     
                     VStack(spacing: 15) {
@@ -100,7 +110,7 @@ struct PlanButton: View {
                 VStack(alignment: .leading) {
                     Text(plan.name)
                         .font(.headline)
-                    Text(plan.price + " / " + plan.period)
+                    Text(String(plan.price) + " / " + plan.period)
                         .font(.subheadline)
                 }
                 Spacer()
@@ -126,9 +136,51 @@ struct PlanButton: View {
 
 struct SubscriptionPlan: Equatable {
     let name: String
-    let price: String
+    let price: Double
     let period: String
-    var savings: String? = nil
+    var savings: String?
+    
+    var formattedPrice: String {
+        return String(format: "$%.2f", price)
+    }
+    
+    func withSavings(comparedTo baseplan: SubscriptionPlan) -> SubscriptionPlan {
+        var newPlan = self
+        let weeksInYear = 52.0
+        _ = 4.0
+        
+        let baseYearlyPrice: Double
+        let yearlyPrice: Double
+        
+        switch baseplan.period {
+        case "week":
+            baseYearlyPrice = baseplan.price * weeksInYear
+        case "month":
+            baseYearlyPrice = baseplan.price * 12
+        case "year":
+            baseYearlyPrice = baseplan.price
+        default:
+            return self
+        }
+        
+        switch self.period {
+        case "week":
+            yearlyPrice = self.price * weeksInYear
+        case "month":
+            yearlyPrice = self.price * 12
+        case "year":
+            yearlyPrice = self.price
+        case "one-time":
+            yearlyPrice = self.price / 2  // Asumimos 2 años de uso para el plan de por vida
+        default:
+            return self
+        }
+        
+        let savingsPercentage = (baseYearlyPrice - yearlyPrice) / baseYearlyPrice * 100
+        newPlan.savings = String(format: "%.0f%%", savingsPercentage)
+        
+        return newPlan
+    }
 }
 
 #Preview {

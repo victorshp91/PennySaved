@@ -17,6 +17,7 @@ struct CategoryView: View {
     @State private var showingDeleteAlert = false
     @State private var categoryToDelete: Category?
     @State private var categoryFilter: CategoryFilter = .all
+    @State private var showingSubscriptionView = false
     
     enum CategoryFilter: String, CaseIterable {
         case all = "All"
@@ -87,11 +88,18 @@ struct CategoryView: View {
             .background(Color("bg"))
             .scrollDismissesKeyboard(.immediately)
             .navigationTitle("Categories")
-            .navigationBarItems(trailing: Button("Add") {
-                showingAddCategory = true
+            .navigationBarItems(trailing: Button("Add New") {
+                if CategoryManager.shared.canAddNewCategory() {
+                    showingAddCategory = true
+                } else {
+                    showingSubscriptionView = true
+                }
             })
             .sheet(isPresented: $showingAddCategory) {
                 AddCategoryView(categories: $categories)
+            }
+            .sheet(isPresented: $showingSubscriptionView) {
+                SubscriptionView()
             }
             .alert(isPresented: $showingDeleteAlert) {
                 Alert(
