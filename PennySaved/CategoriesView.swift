@@ -9,6 +9,7 @@ import SwiftUI
 import CoreData
 
 struct CategoryView: View {
+    @EnvironmentObject var storeKit: StoreKitManager
     @State private var categories: [Category] = []
     @Binding var selectedCategory: Category?
     @Environment(\.presentationMode) var presentationMode
@@ -89,7 +90,7 @@ struct CategoryView: View {
             .scrollDismissesKeyboard(.immediately)
             .navigationTitle("Categories")
             .navigationBarItems(trailing: Button("Add New") {
-                if CategoryManager.shared.canAddNewCategory() {
+                if CategoryManager.shared.canAddNewCategory() || storeKit.hasActiveSubscription {
                     showingAddCategory = true
                 } else {
                     showingSubscriptionView = true
@@ -100,6 +101,7 @@ struct CategoryView: View {
             }
             .sheet(isPresented: $showingSubscriptionView) {
                 SubscriptionView()
+                
             }
             .alert(isPresented: $showingDeleteAlert) {
                 Alert(
