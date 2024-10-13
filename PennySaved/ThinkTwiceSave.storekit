@@ -14,13 +14,27 @@
 
   ],
   "products" : [
-
+    {
+      "displayPrice" : "49.99",
+      "familyShareable" : false,
+      "internalID" : "6736870451",
+      "localizations" : [
+        {
+          "description" : "One-time payment for lifetime premium access!",
+          "displayName" : "Lifetime subscription",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "ThinkTwiceLifetime",
+      "referenceName" : "LifeTime",
+      "type" : "NonConsumable"
+    }
   ],
   "settings" : {
     "_applicationInternalID" : "6736870302",
     "_developerTeamID" : "8SB327NDUL",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 750472677.25970805,
+    "_lastSynchronizedDate" : 750474229.32528996,
     "_storeKitErrors" : [
       {
         "current" : null,
@@ -70,7 +84,99 @@
     ]
   },
   "subscriptionGroups" : [
+    {
+      "id" : "21558791",
+      "localizations" : [
 
+      ],
+      "name" : "ThinkTwiceSave",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6736870423",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Full access to premium features for a month!",
+              "displayName" : "Monthly subscription",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "ThinkTwiceMonthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly",
+          "subscriptionGroupID" : "21558791",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "0.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6736870507",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlock premium features for a week!",
+              "displayName" : "Weekly Subscription",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "thinkTwiceWeekly",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Weekly",
+          "subscriptionGroupID" : "21558791",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "29.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "6736870425",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Enjoy all premium features for a year!",
+              "displayName" : "Yearly subscription",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "ThinkTwiceYearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Yearly",
+          "subscriptionGroupID" : "21558791",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
   ],
   "version" : {
     "major" : 4,

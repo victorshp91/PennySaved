@@ -9,8 +9,8 @@ import SwiftUI
 
 struct OnboardingScreen: View {
     @State private var currentSlide = 0
-    
     @Binding var showOnBoardingScreen: Bool
+    @State private var showSubscriptionView = false
     
     let slides = [
         OnboardingSlide(title: "Save on Impulse Buys", description: "Track items you almost bought but didn't. Watch your savings grow!", imageName: "dollarsign.circle.fill"),
@@ -24,60 +24,65 @@ struct OnboardingScreen: View {
     let secondaryColor = Color(hex: "212B33")
     
     var body: some View {
-       
-            ZStack {
-                backgroundColor.edgesIgnoringSafeArea(.all)
-                
-                VStack {
-                    TabView(selection: $currentSlide) {
-                        ForEach(0..<slides.count, id: \.self) { index in
-                            VStack {
-                                Image(systemName: slides[index].imageName)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 150, height: 150)
-                                    .foregroundColor(accentColor)
-                                    .padding()
-                                
-                                Text(slides[index].title)
-                                    .font(.title)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(accentColor)
-                                    .padding()
-                                
-                                Text(slides[index].description)
-                                    .font(.body)
-                                    .multilineTextAlignment(.center)
-                                    .foregroundColor(.white)
-                                    .padding()
-                            }
-                            .tag(index)
+        ZStack {
+            backgroundColor.edgesIgnoringSafeArea(.all)
+            
+            VStack {
+                TabView(selection: $currentSlide) {
+                    ForEach(0..<slides.count, id: \.self) { index in
+                        VStack {
+                            Image(systemName: slides[index].imageName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 150, height: 150)
+                                .foregroundColor(accentColor)
+                                .padding()
+                            
+                            Text(slides[index].title)
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundColor(accentColor)
+                                .padding()
+                            
+                            Text(slides[index].description)
+                                .font(.body)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.white)
+                                .padding()
                         }
+                        .tag(index)
                     }
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-                    
-                    Button(action: {
-                        if currentSlide < slides.count - 1 {
-                            withAnimation {
-                                currentSlide += 1
-                            }
-                        } else {
-                            showOnBoardingScreen = false
-                        }
-                    }) {
-                        Text(currentSlide < slides.count - 1 ? "Next" : "Get Started")
-                            .font(.headline)
-                            .foregroundColor(backgroundColor)
-                            .frame(width: 200, height: 50)
-                            .background(accentColor)
-                            .cornerRadius(25)
-                    }
-                    .padding()
                 }
-            }.onDisappear {
-                UserDefaults.standard.set(false, forKey: "showOnBoardingScreen")
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+                
+                Button(action: {
+                    if currentSlide < slides.count - 1 {
+                        withAnimation {
+                            currentSlide += 1
+                        }
+                    } else {
+                        showSubscriptionView = true
+                    }
+                }) {
+                    Text(currentSlide < slides.count - 1 ? "Next" : "Get Started")
+                        .font(.headline)
+                        .foregroundColor(backgroundColor)
+                        .frame(width: 200, height: 50)
+                        .background(accentColor)
+                        .cornerRadius(25)
+                }
+                .padding()
             }
-        
+        }
+        .onDisappear {
+            UserDefaults.standard.set(false, forKey: "showOnBoardingScreen")
+        }
+        .fullScreenCover(isPresented: $showSubscriptionView) {
+            SubscriptionView()
+                .onDisappear {
+                    showOnBoardingScreen = false
+                }
+        }
     }
 }
 

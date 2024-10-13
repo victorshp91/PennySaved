@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreData
 import Charts
+import StoreKit
 
 struct ContentView: View {
     
@@ -18,6 +19,7 @@ struct ContentView: View {
     @State private var showSubscriptionView = false
     @State private var showNewGoalView = false
     @State private var showNewSavingView = false
+    @StateObject private var storeKit = StoreKitManager()
     
     var today: Date {
         Calendar.current.startOfDay(for: Date())
@@ -78,188 +80,198 @@ struct ContentView: View {
     @State private var needsRefresh: Bool = false
     var body: some View {
         NavigationStack {
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 20) {
+               
+                
+                ScrollView(showsIndicators: false) {
                     
-                    Image("cabecera")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 40)
-                        .padding(.horizontal, 15)
-                    // PROFILE HEADER
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            NavigationLink(destination: savigsListView(saving: savingsVm.savings)) {
-                                HStack {
-                                    Text("View All ThinkTwiceSave")
-                                    Image(systemName: "list.bullet")
-                                }
-                                .padding()
-                                .background(Color("buttonPrimary"))
-                                .foregroundStyle(.black)
-                                .cornerRadius(50)
+                    
+                    VStack(alignment: .leading, spacing: 20) {
+                        
+                        
+                        HStack{
+                            Image("cabecera")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 40)
+                            Spacer()
+                            if storeKit.hasActiveSubscription {
+                                PremiumBadgeView()
+
+                                   
                             }
-                            
-                            Button(action: handleNewSavingTap) {
-                                HStack{
-                                    Text("New ThinkTwiceSave")
-                                    Image(systemName: "plus")
-                                    
-                                }.padding()
+                        }  .padding(.horizontal, 15)
+                        // PROFILE HEADER
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                NavigationLink(destination: savigsListView(saving: savingsVm.savings)) {
+                                    HStack {
+                                        Text("View All ThinkTwiceSave")
+                                        Image(systemName: "list.bullet")
+                                    }
+                                    .padding()
                                     .background(Color("buttonPrimary"))
                                     .foregroundStyle(.black)
                                     .cornerRadius(50)
-                                
-                            }
-                            Button(action: handleNewGoalTap) {
-                                HStack {
-                                    Text("New Goal")
-                                    Image(systemName: "plus")
                                 }
-                                .padding()
-                                .background(Color("buttonPrimary"))
-                                .foregroundStyle(.black)
-                                .cornerRadius(50)
-                            }
-                        } .font(.headline).bold()
-                            .padding(.horizontal, 15)
-                    }
-                    
-                    
-                    // THIS MONTH SAVED & TOTAL SAVINGS
-                    HStack {
-                        HStack {
-                            Image(systemName: "m.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 40)
-                            VStack(alignment:.leading) {
-                                Text("This Month ThinkTwiceSave").font(.caption)
-                                Text("$\(totalAmountThisMonth, specifier: "%.2f")").bold()
-                            }
-                            Spacer()
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, maxHeight: 250)
-                        .background(Color("boxesBg"))
-                        .cornerRadius(10)
-                        .foregroundStyle(.white)
-                        
-                        HStack {
-                            Image(systemName: "l.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 40)
-                            VStack(alignment:.leading) {
-                                Text("Lifetime ThinkTwiceSave").font(.caption)
                                 
-                                Text("$\(totalAmount, specifier: "%.2f")").bold()
-                            }
-                            Spacer()
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, maxHeight: 250)
-                        .background(Color("boxesBg"))
-                        .cornerRadius(10)
-                        .foregroundStyle(.white)
-                    }.padding(.horizontal, 15)
-                    
-                    // Savings Chart
-                    
-                    
-                    MonthlySavingsChartView()
-                    
-                    
-                    // Goals Section
-                    
-                    HStack {
-                        Text("ThinkTwiceSave Goals").foregroundStyle(.white)
-                        Spacer()
-                        NavigationLink(destination: GoalsListView(isForSelect: false, selectedGoal: Binding.constant(nil))) {
-                            HStack {
-                                Spacer()
-                                Text("View All")
-                                Image(systemName: "arrow.forward.circle.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                            }
-                            .foregroundStyle(Color("buttonPrimary"))
-                            .frame(maxWidth:.infinity, maxHeight: 25)
-                        }
-                        
-                    }.padding(.horizontal, 15)
-                    
-                    
-                    HStack{
-                        if !goalsVm.goals.isEmpty {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack{
-                                    ForEach(goalsVm.goals.prefix(3)) {goal in
+                                Button(action: handleNewSavingTap) {
+                                    HStack{
+                                        Text("New ThinkTwiceSave")
+                                        Image(systemName: "plus")
                                         
-                                        GoalCellView(goal: goal, isForSelect: false)
+                                    }.padding()
+                                        .background(Color("buttonPrimary"))
+                                        .foregroundStyle(.black)
+                                        .cornerRadius(50)
+                                    
+                                }
+                                Button(action: handleNewGoalTap) {
+                                    HStack {
+                                        Text("New Goal")
+                                        Image(systemName: "plus")
                                     }
-                                }.padding(.horizontal, 15)
-                            }
-                        } else {
-                            Spacer()
-                            ContentUnavailableView("No goals found", systemImage: "figure.walk.circle.fill")
-                            Spacer()
-                            
-                            
-                            
-                        }
-                    }
-                    
-                    
-                    
-                    
-                    // TODAY
-                    HStack {
-                        Text("Today").foregroundStyle(.white)
-                        Spacer()
-                        
-                        
-                    }.padding(.horizontal, 15)
-                    if !savingsToday.isEmpty {
-                        ForEach(savingsToday) { datum in
-                            savingTransactionCellView(saving: datum)
+                                    .padding()
+                                    .background(Color("buttonPrimary"))
+                                    .foregroundStyle(.black)
+                                    .cornerRadius(50)
+                                }
+                            } .font(.headline).bold()
                                 .padding(.horizontal, 15)
                         }
-                    } else {
-                        ContentUnavailableView("No ThinkTwiceSave found Today", systemImage: "dollarsign.circle.fill")
-                    }
-                    
-                    
-                    // This Month
-                    VStack(alignment: .leading){
-                        Text("This Month").foregroundStyle(.white)
-                        if !savingsThisMonth.isEmpty {
-                            ForEach(savingsThisMonth) { datum in
-                                savingTransactionCellView(saving: datum)
+                        
+                        
+                        // THIS MONTH SAVED & TOTAL SAVINGS
+                        HStack {
+                            HStack {
+                                Image(systemName: "m.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 40)
+                                VStack(alignment:.leading) {
+                                    Text("This Month ThinkTwiceSave").font(.caption)
+                                    Text("$\(totalAmountThisMonth, specifier: "%.2f")").bold()
+                                }
+                                Spacer()
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity, maxHeight: 250)
+                            .background(Color("boxesBg"))
+                            .cornerRadius(10)
+                            .foregroundStyle(.white)
+                            
+                            HStack {
+                                Image(systemName: "l.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 40)
+                                VStack(alignment:.leading) {
+                                    Text("Lifetime ThinkTwiceSave").font(.caption)
+                                    
+                                    Text("$\(totalAmount, specifier: "%.2f")").bold()
+                                }
+                                Spacer()
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity, maxHeight: 250)
+                            .background(Color("boxesBg"))
+                            .cornerRadius(10)
+                            .foregroundStyle(.white)
+                        }.padding(.horizontal, 15)
+                        
+                        // Savings Chart
+                        
+                        
+                        MonthlySavingsChartView()
+                        
+                        
+                        // Goals Section
+                        
+                        HStack {
+                            Text("ThinkTwiceSave Goals").foregroundStyle(.white)
+                            Spacer()
+                            NavigationLink(destination: GoalsListView(isForSelect: false, selectedGoal: Binding.constant(nil))) {
+                                HStack {
+                                    Spacer()
+                                    Text("View All")
+                                    Image(systemName: "arrow.forward.circle.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                }
+                                .foregroundStyle(Color("buttonPrimary"))
+                                .frame(maxWidth:.infinity, maxHeight: 25)
+                            }
+                            
+                        }.padding(.horizontal, 15)
+                        
+                        
+                        HStack{
+                            if !goalsVm.goals.isEmpty {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack{
+                                        ForEach(goalsVm.goals.prefix(3)) {goal in
+                                            
+                                            GoalCellView(goal: goal, isForSelect: false)
+                                        }
+                                    }.padding(.horizontal, 15)
+                                }
+                            } else {
+                                Spacer()
+                                ContentUnavailableView("No goals found", systemImage: "figure.walk.circle.fill")
+                                Spacer()
+                                
+                                
                                 
                             }
-                        } else {
-                            
-                            ContentUnavailableView("No ThinkTwiceSave found this month", systemImage: "dollarsign.circle.fill")
-                            
                         }
-                    }.padding(.horizontal, 15)
+                        
+                        
+                        
+                        // TODAY
+                        HStack {
+                            Text("Today").foregroundStyle(.white)
+                            Spacer()
+                            
+                            
+                        }.padding(.horizontal, 15)
+                        if !savingsToday.isEmpty {
+                            ForEach(savingsToday) { datum in
+                                savingTransactionCellView(saving: datum)
+                                    .padding(.horizontal, 15)
+                            }
+                        } else {
+                            ContentUnavailableView("No ThinkTwiceSave found Today", systemImage: "dollarsign.circle.fill")
+                        }
+                        
+                        
+                        // This Month
+                        VStack(alignment: .leading){
+                            Text("This Month").foregroundStyle(.white)
+                            if !savingsThisMonth.isEmpty {
+                                ForEach(savingsThisMonth) { datum in
+                                    savingTransactionCellView(saving: datum)
+                                    
+                                }
+                            } else {
+                                
+                                ContentUnavailableView("No ThinkTwiceSave found this month", systemImage: "dollarsign.circle.fill")
+                                
+                            }
+                        }.padding(.horizontal, 15)
+                        
+                    }
+                    Spacer()
+                }.sheet(isPresented: $showOnBoardingScreen){
                     
+                    OnboardingScreen(showOnBoardingScreen: $showOnBoardingScreen)
+                        .presentationDetents([.large])
                 }
-                Spacer()
-            }.sheet(isPresented: $showOnBoardingScreen){
-                
-                OnboardingScreen(showOnBoardingScreen: $showOnBoardingScreen)
-                    .presentationDetents([.large])
-            }
-           
             
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("bg"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        showInfoSheet = true  // Update this line
+                        showInfoSheet = true
                     }) {
                         Image(systemName: "info.circle.fill")
                             .foregroundStyle(Color("buttonPrimary"))
@@ -278,6 +290,7 @@ struct ContentView: View {
             .sheet(isPresented: $showNewSavingView) {
                 NewSavingView()
             }
+            .environmentObject(storeKit)
         }
     }
     
@@ -362,7 +375,7 @@ struct ContentView: View {
     }
     
     private func handleNewGoalTap() {
-        if goalsVm.goalCount >= 3 {
+        if !hasActiveSubscription() && goalsVm.goalCount >= 3 {
             showSubscriptionView = true
         } else {
             showNewGoalView = true
@@ -370,11 +383,15 @@ struct ContentView: View {
     }
     
     private func handleNewSavingTap() {
-        if savingsVm.savingsCount >= 2 {
+        if !hasActiveSubscription() && savingsVm.savingsCount >= 2 {
             showSubscriptionView = true
         } else {
             showNewSavingView = true
         }
+    }
+    
+    private func hasActiveSubscription() -> Bool {
+        return !storeKit.purchasedProductIDs.isEmpty
     }
 }
 
@@ -387,5 +404,6 @@ struct ContentView: View {
     ContentView()
         .preferredColorScheme(.dark)
 }
+
 
 

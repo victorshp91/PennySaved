@@ -10,7 +10,8 @@ import SwiftUI
 import StoreKit
 
 struct SubscriptionView: View {
-    @StateObject private var storeKit = StoreKitManager()
+    @EnvironmentObject var storeKit: StoreKitManager
+
     @State private var selectedProduct: Product?
     @State private var showingAlert = false
     @State private var alertMessage = ""
@@ -42,9 +43,11 @@ struct SubscriptionView: View {
                     
                     VStack(spacing: 15) {
                         ForEach(storeKit.products, id: \.id) { product in
-                            PlanButton(product: product, isSelected: selectedProduct == product, accentColor: accentColor, secondaryColor: secondaryColor) {
-                                selectedProduct = product
-                            }
+                            PlanButton(product: product,
+                                       isSelected: selectedProduct == product,
+                                       accentColor: accentColor,
+                                       secondaryColor: secondaryColor,
+                                       action: { selectedProduct = product })
                         }
                     }
                     
@@ -88,9 +91,28 @@ struct SubscriptionView: View {
             .background(backgroundColor.edgesIgnoringSafeArea(.all))
             .navigationTitle("Premium Subscription")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(trailing: closeButton)
             .alert(isPresented: $showingAlert) {
-                Alert(title: Text("Purchase Status"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                Alert(
+                    title: Text("Purchase Status"),
+                    message: Text(alertMessage),
+                    dismissButton: .default(Text("OK")) {
+                        if purchaseSuccessful {
+                            dismiss()
+                        }
+                    }
+                )
             }
+        }
+    }
+    
+    private var closeButton: some View {
+        Button(action: {
+            dismiss()
+        }) {
+            Image(systemName: "xmark.circle.fill")
+                .foregroundColor(.white)
+                .font(.title2)
         }
     }
 }
@@ -123,7 +145,7 @@ struct PlanButton: View {
                 VStack(alignment: .leading) {
                     Text(product.displayName)
                         .font(.headline)
-                    Text(product.subscriptionPeriod)
+                    Text(subscriptionPeriod)
                         .font(.subheadline)
                 }
                 Spacer()
@@ -149,112 +171,33 @@ struct PlanButton: View {
     private var subscriptionPeriod: String {
         if let subscription = product.subscription {
             switch subscription.subscriptionPeriod.unit {
-            case .day:
-                return "\(product.displayPrice) / day"
-            case .week:
-                return "\(product.displayPrice) / week"
-            case .month:
-                return "\(product.displayPrice) / month"
-            case .year:
-                return "\(product.displayPrice) / year"
-            @unknown default:
-                return product.displayPrice
+            case .day: return "\(product.displayPrice) / day"
+            case .week: return "\(product.displayPrice) / week"
+            case .month: return "\(product.displayPrice) / month"
+            case .year: return "\(product.displayPrice) / year"
+            @unknown default: return product.displayPrice
             }
         } else {
-            return "Lifetime"
+            return "\(product.displayPrice) / Lifetime"
         }
     }
     
     private func calculateSavings() -> String? {
-        guard let subscription = product.subscription else {
-            return "Best Value" // Para la compra de por vida
-        }
-        
-        let weeklyProduct = findWeeklyProduct()
-        guard let weeklyPrice = weeklyProduct?.price else {
-            return nil
-        }
-        
-        let annualCost: Decimal
-        switch subscription.subscriptionPeriod.unit {
-        case .week:
-            annualCost = product.price * 52
-        case .month:
-            annualCost = product.price * 12
-        case .year:
-            annualCost = product.price
+        switch product.id {
+        case "thinkTwiceWeekly":
+            return nil  // No hay ahorro para el plan semanal
+        case "ThinkTwiceMonthly":
+            return "Save 25%"  // (0.99 * 4 - 2.99) / (0.99 * 4) ≈ 25%
+        case "ThinkTwiceYearly":
+            return "Save 42%"  // (0.99 * 52 - 29.99) / (0.99 * 52) ≈ 42%
+        case "ThinkTwiceLifetime":
+            return "Best Value"
         default:
             return nil
-        }
-        
-        let weeklyAnnualCost = weeklyPrice * 52
-        let savingsPercentage = (weeklyAnnualCost - annualCost) / weeklyAnnualCost * 100
-        
-        return String(format: "Save %.0f%%", savingsPercentage as NSNumber)
-    }
-    
-    private func findWeeklyProduct() -> Product? {
-        // Asumimos que el SubscriptionView tiene acceso a todos los productos
-        // Puedes pasar esto como una propiedad si es necesario
-        let allProducts = SubscriptionView().storeKit.products
-        return allProducts.first { product in
-            if let subscription = product.subscription,
-               subscription.subscriptionPeriod.unit == .week {
-                return true
-            }
-            return false
         }
     }
 }
 
-struct SubscriptionPlan: Equatable {
-    let name: String
-    let price: Double
-    let period: String
-    var savings: String?
-    
-    var formattedPrice: String {
-        return String(format: "$%.2f", price)
-    }
-    
-    func withSavings(comparedTo baseplan: SubscriptionPlan) -> SubscriptionPlan {
-        var newPlan = self
-        let weeksInYear = 52.0
-        _ = 4.0
-        
-        let baseYearlyPrice: Double
-        let yearlyPrice: Double
-        
-        switch baseplan.period {
-        case "week":
-            baseYearlyPrice = baseplan.price * weeksInYear
-        case "month":
-            baseYearlyPrice = baseplan.price * 12
-        case "year":
-            baseYearlyPrice = baseplan.price
-        default:
-            return self
-        }
-        
-        switch self.period {
-        case "week":
-            yearlyPrice = self.price * weeksInYear
-        case "month":
-            yearlyPrice = self.price * 12
-        case "year":
-            yearlyPrice = self.price
-        case "one-time":
-            yearlyPrice = self.price / 2  // Asumimos 2 años de uso para el plan de por vida
-        default:
-            return self
-        }
-        
-        let savingsPercentage = (baseYearlyPrice - yearlyPrice) / baseYearlyPrice * 100
-        newPlan.savings = String(format: "%.0f%%", savingsPercentage)
-        
-        return newPlan
-    }
-}
 
 #Preview {
     SubscriptionView()

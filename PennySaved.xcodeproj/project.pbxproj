@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		F26291EB2CBB382A00B21825 /* ThinkTwiceSave.storekit in Resources */ = {isa = PBXBuildFile; fileRef = F26291EA2CBB382A00B21825 /* ThinkTwiceSave.storekit */; };
+		F26291ED2CBB4F1E00B21825 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26291EC2CBB4F1E00B21825 /* StoreKitManager.swift */; };
+		F26291F02CBB56B400B21825 /* PremiumBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26291EF2CBB56B400B21825 /* PremiumBadgeView.swift */; };
 		F26602392C7ADEB50078743A /* LoadingAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26602382C7ADEB50078743A /* LoadingAppView.swift */; };
 		F2768B1C2C6ADEEE00179B04 /* PennySavedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B1B2C6ADEEE00179B04 /* PennySavedApp.swift */; };
 		F2768B1E2C6ADEEE00179B04 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B1D2C6ADEEE00179B04 /* Persistence.swift */; };
@@ -35,6 +37,8 @@
 
 /* Begin PBXFileReference section */
 		F26291EA2CBB382A00B21825 /* ThinkTwiceSave.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = ThinkTwiceSave.storekit; sourceTree = "<group>"; };
+		F26291EC2CBB4F1E00B21825 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
+		F26291EF2CBB56B400B21825 /* PremiumBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumBadgeView.swift; sourceTree = "<group>"; };
 		F26602382C7ADEB50078743A /* LoadingAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingAppView.swift; sourceTree = "<group>"; };
 		F2768B182C6ADEEE00179B04 /* PennySaved.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PennySaved.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2768B1B2C6ADEEE00179B04 /* PennySavedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PennySavedApp.swift; sourceTree = "<group>"; };
@@ -74,6 +78,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F26291EE2CBB54A400B21825 /* Subscription */ = {
+			isa = PBXGroup;
+			children = (
+				F26291EF2CBB56B400B21825 /* PremiumBadgeView.swift */,
+				F26291EC2CBB4F1E00B21825 /* StoreKitManager.swift */,
+				F2AA55D62CB62C1C00812224 /* SubscriptionView.swift */,
+			);
+			path = Subscription;
+			sourceTree = "<group>";
+		};
 		F2768B0F2C6ADEEE00179B04 = {
 			isa = PBXGroup;
 			children = (
@@ -107,7 +121,7 @@
 				F29954CA2C829796002CC833 /* OnBoardingScreenView.swift */,
 				F2768B402C6F81FE00179B04 /* GoalCellView.swift */,
 				F2768B482C70D2E700179B04 /* SavingsVm.swift */,
-				F2AA55D62CB62C1C00812224 /* SubscriptionView.swift */,
+				F26291EE2CBB54A400B21825 /* Subscription */,
 				F2768B342C6B0A2600179B04 /* CalculatorView.swift */,
 				F2768B322C6AF98B00179B04 /* savingTransactionCellView.swift */,
 				F2768B3E2C6F7D4000179B04 /* SearchBarView.swift */,
@@ -203,6 +217,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F26291F02CBB56B400B21825 /* PremiumBadgeView.swift in Sources */,
 				F26602392C7ADEB50078743A /* LoadingAppView.swift in Sources */,
 				F2768B312C6AEF7700179B04 /* NewSavingView.swift in Sources */,
 				F2768B352C6B0A2600179B04 /* CalculatorView.swift in Sources */,
@@ -218,6 +233,7 @@
 				F2768B232C6ADEEE00179B04 /* ContentView.swift in Sources */,
 				F2AA55D72CB62C1C00812224 /* SubscriptionView.swift in Sources */,
 				F2768B3F2C6F7D4000179B04 /* SearchBarView.swift in Sources */,
+				F26291ED2CBB4F1E00B21825 /* StoreKitManager.swift in Sources */,
 				F2768B1E2C6ADEEE00179B04 /* Persistence.swift in Sources */,
 				F2768B3B2C6B966000179B04 /* CategoriesView.swift in Sources */,
 				F2768B332C6AF98B00179B04 /* savingTransactionCellView.swift in Sources */,
@@ -353,7 +369,7 @@
 				CODE_SIGN_ENTITLEMENTS = PennySaved/PennySaved.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"PennySaved/Preview Content\"";
 				DEVELOPMENT_TEAM = 8SB327NDUL;
@@ -400,7 +416,7 @@
 				CODE_SIGN_ENTITLEMENTS = PennySaved/PennySaved.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"PennySaved/Preview Content\"";
 				DEVELOPMENT_TEAM = 8SB327NDUL;
