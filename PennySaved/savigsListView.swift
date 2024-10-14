@@ -19,7 +19,7 @@ enum SortOption: String, CaseIterable, Identifiable {
 }
 
 struct savigsListView: View {
-    
+    @EnvironmentObject var storeKit: StoreKitManager
     @FetchRequest(
             entity: Category.entity(),
             sortDescriptors: [NSSortDescriptor(keyPath: \Category.name, ascending: true)]
@@ -32,7 +32,9 @@ struct savigsListView: View {
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         ]
-    
+    @State private var showingNewSavingView = false  // Add this line
+    @EnvironmentObject var savingsVm: SavingsVm  // Add this line if not already present
+
     // Function to sort savings based on selected option
         private func sortedSavings() -> [Saving] {
             
@@ -156,6 +158,7 @@ struct savigsListView: View {
                         ForEach(sortedSavings()) { datum in
                             savingTransactionCellView(saving: datum)
                                 .padding(.horizontal, 15)
+                                .environmentObject(storeKit)
                                
                             
                         }
@@ -167,6 +170,18 @@ struct savigsListView: View {
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color("bg"))
                 .scrollDismissesKeyboard(.immediately)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        showingNewSavingView = true
+                    }) {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+            .sheet(isPresented: $showingNewSavingView) {
+                NewSavingView()
+            }
         }
     }
 }

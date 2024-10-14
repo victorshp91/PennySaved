@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct savingTransactionCellView: View {
-
+    @EnvironmentObject var storeKit: StoreKitManager
     @StateObject var saving: Saving
     
     var body: some View {
@@ -25,7 +25,7 @@ struct savingTransactionCellView: View {
             VStack(alignment: .leading) {
                 Text(saving.name ?? "Not Name").bold()
                 Text("Saved on \(saving.date ?? Date(), style: .date)").foregroundStyle(.secondary)
-                NavigationLink(destination: NewSavingView(isForEdit: true, savingForEdit: saving)) {
+                NavigationLink(destination: NewSavingView(isForEdit: true, savingForEdit: saving).environmentObject(storeKit)) {
                     Text("Details")
                         .foregroundStyle(Color("buttonPrimary"))
                 }

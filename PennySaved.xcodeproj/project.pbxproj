@@ -10,6 +10,8 @@
 		F26291EB2CBB382A00B21825 /* ThinkTwiceSave.storekit in Resources */ = {isa = PBXBuildFile; fileRef = F26291EA2CBB382A00B21825 /* ThinkTwiceSave.storekit */; };
 		F26291ED2CBB4F1E00B21825 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26291EC2CBB4F1E00B21825 /* StoreKitManager.swift */; };
 		F26291F02CBB56B400B21825 /* PremiumBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26291EF2CBB56B400B21825 /* PremiumBadgeView.swift */; };
+		F26291F22CBC9D2800B21825 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26291F12CBC9D2800B21825 /* PrivacyPolicyView.swift */; };
+		F26291F42CBC9DF000B21825 /* TermsAndConditionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26291F32CBC9DF000B21825 /* TermsAndConditionsView.swift */; };
 		F26602392C7ADEB50078743A /* LoadingAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26602382C7ADEB50078743A /* LoadingAppView.swift */; };
 		F2768B1C2C6ADEEE00179B04 /* PennySavedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B1B2C6ADEEE00179B04 /* PennySavedApp.swift */; };
 		F2768B1E2C6ADEEE00179B04 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2768B1D2C6ADEEE00179B04 /* Persistence.swift */; };
@@ -39,6 +41,8 @@
 		F26291EA2CBB382A00B21825 /* ThinkTwiceSave.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = ThinkTwiceSave.storekit; sourceTree = "<group>"; };
 		F26291EC2CBB4F1E00B21825 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 		F26291EF2CBB56B400B21825 /* PremiumBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumBadgeView.swift; sourceTree = "<group>"; };
+		F26291F12CBC9D2800B21825 /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
+		F26291F32CBC9DF000B21825 /* TermsAndConditionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsView.swift; sourceTree = "<group>"; };
 		F26602382C7ADEB50078743A /* LoadingAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingAppView.swift; sourceTree = "<group>"; };
 		F2768B182C6ADEEE00179B04 /* PennySaved.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PennySaved.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2768B1B2C6ADEEE00179B04 /* PennySavedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PennySavedApp.swift; sourceTree = "<group>"; };
@@ -81,6 +85,8 @@
 		F26291EE2CBB54A400B21825 /* Subscription */ = {
 			isa = PBXGroup;
 			children = (
+				F26291F32CBC9DF000B21825 /* TermsAndConditionsView.swift */,
+				F26291F12CBC9D2800B21825 /* PrivacyPolicyView.swift */,
 				F26291EF2CBB56B400B21825 /* PremiumBadgeView.swift */,
 				F26291EC2CBB4F1E00B21825 /* StoreKitManager.swift */,
 				F2AA55D62CB62C1C00812224 /* SubscriptionView.swift */,
@@ -219,6 +225,7 @@
 			files = (
 				F26291F02CBB56B400B21825 /* PremiumBadgeView.swift in Sources */,
 				F26602392C7ADEB50078743A /* LoadingAppView.swift in Sources */,
+				F26291F42CBC9DF000B21825 /* TermsAndConditionsView.swift in Sources */,
 				F2768B312C6AEF7700179B04 /* NewSavingView.swift in Sources */,
 				F2768B352C6B0A2600179B04 /* CalculatorView.swift in Sources */,
 				F2768B432C6F876D00179B04 /* NewGoalView.swift in Sources */,
@@ -228,6 +235,7 @@
 				F2768B372C6B875400179B04 /* savigsListView.swift in Sources */,
 				F2768B212C6ADEEE00179B04 /* PennySaved.xcdatamodeld in Sources */,
 				F29954CB2C829796002CC833 /* OnBoardingScreenView.swift in Sources */,
+				F26291F22CBC9D2800B21825 /* PrivacyPolicyView.swift in Sources */,
 				F2AA55D32CB627D400812224 /* infoSheet.swift in Sources */,
 				F2768B492C70D2E700179B04 /* SavingsVm.swift in Sources */,
 				F2768B232C6ADEEE00179B04 /* ContentView.swift in Sources */,
@@ -369,7 +377,7 @@
 				CODE_SIGN_ENTITLEMENTS = PennySaved/PennySaved.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"PennySaved/Preview Content\"";
 				DEVELOPMENT_TEAM = 8SB327NDUL;
@@ -416,7 +424,7 @@
 				CODE_SIGN_ENTITLEMENTS = PennySaved/PennySaved.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"PennySaved/Preview Content\"";
 				DEVELOPMENT_TEAM = 8SB327NDUL;

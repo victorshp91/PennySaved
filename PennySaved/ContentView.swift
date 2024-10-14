@@ -94,16 +94,17 @@ struct ContentView: View {
                                 .scaledToFit()
                                 .frame(height: 40)
                             Spacer()
-                            if storeKit.hasActiveSubscription {
+                           
                                 PremiumBadgeView()
+                                .environmentObject(storeKit)
 
                                    
-                            }
+                            
                         }  .padding(.horizontal, 15)
                         // PROFILE HEADER
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                NavigationLink(destination: savigsListView(saving: savingsVm.savings)) {
+                                NavigationLink(destination: savigsListView(saving: savingsVm.savings).environmentObject(storeKit)) {
                                     HStack {
                                         Text("View All ThinkTwiceSave")
                                         Image(systemName: "list.bullet")
@@ -290,8 +291,8 @@ struct ContentView: View {
             .sheet(isPresented: $showNewSavingView) {
                 NewSavingView()
             }
-            .environmentObject(storeKit)
-        }
+           
+        } .environmentObject(storeKit)
     }
     
     func abbreviatedMonth(from month: String) -> String {
@@ -383,7 +384,7 @@ struct ContentView: View {
     }
     
     private func handleNewSavingTap() {
-        if !hasActiveSubscription() && savingsVm.savingsCount >= 2 {
+        if !hasActiveSubscription() && savingsVm.savingsCount >= 5 {
             showSubscriptionView = true
         } else {
             showNewSavingView = true

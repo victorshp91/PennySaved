@@ -11,7 +11,6 @@ import StoreKit
 
 struct SubscriptionView: View {
     @EnvironmentObject var storeKit: StoreKitManager
-
     @State private var selectedProduct: Product?
     @State private var showingAlert = false
     @State private var alertMessage = ""
@@ -30,16 +29,36 @@ struct SubscriptionView: View {
                         .font(.title.bold())
                         .foregroundColor(accentColor)
                     
-                    Text("You've reached the limit of free features. Upgrade to Premium to create unlimited goals and savings, and access more features!")
+                    Text("You've reached the limit of free features. Upgrade to Premium to remove these limitations:")
                         .foregroundColor(.white)
                         .padding(.bottom)
                     
                     VStack(alignment: .leading, spacing: 15) {
-                        FeatureRow(icon: "target", text: "Unlimited financial goals", accentColor: accentColor)
-                        FeatureRow(icon: "dollarsign.circle", text: "Unlimited savings tracking", accentColor: accentColor)
-                        FeatureRow(icon: "chart.pie.fill", text: "Detailed expense analysis", accentColor: accentColor)
-                        FeatureRow(icon: "folder.badge.plus", text: "Unlimited custom categories", accentColor: accentColor)
+                        LimitationRow(icon: "arrow.up.circle.fill", text: "Only 12 ThinkTwiceSave Records", premium: "Unlimited Records", accentColor: accentColor)
+                        LimitationRow(icon: "flag.fill", text: "Only 6 ThinkTwiceSave Goals", premium: "Unlimited Goals", accentColor: accentColor)
+                        LimitationRow(icon: "folder.fill", text: "Only 6 Custom Categories", premium: "Unlimited Categories", accentColor: accentColor)
                     }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(secondaryColor)
+                    .cornerRadius(10)
+                    
+                    Text("Premium Benefits:")
+                        .font(.headline)
+                        .foregroundColor(accentColor)
+                        .padding(.top)
+                    
+                    VStack(alignment: .leading, spacing: 15) {
+                        FeatureRow(icon: "infinity", text: "Unlimited ThinkTwiceSave Records", accentColor: accentColor)
+                        FeatureRow(icon: "flag.fill", text: "Unlimited ThinkTwiceSave Goals", accentColor: accentColor)
+                        FeatureRow(icon: "folder.fill", text: "Unlimited Custom Categories", accentColor: accentColor)
+                        FeatureRow(icon: "chart.pie.fill", text: "Detailed savings analysis", accentColor: accentColor)
+                        FeatureRow(icon: "icloud.and.arrow.up", text: "Cloud sync and backup", accentColor: accentColor)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(secondaryColor)
+                    .cornerRadius(10)
                     
                     VStack(spacing: 15) {
                         ForEach(storeKit.products, id: \.id) { product in
@@ -56,26 +75,22 @@ struct SubscriptionView: View {
                             Task {
                                 do {
                                     if (try await storeKit.purchase(product)) != nil {
-                                        // Purchase was successful
                                         alertMessage = "Thank you for your purchase!"
                                         purchaseSuccessful = true
                                         showingAlert = true
-                                        // Forzar una actualización del estado de la suscripción
                                         await storeKit.updatePurchasedProducts()
                                     } else {
-                                        // Purchase was cancelled or is pending
                                         alertMessage = "Purchase was cancelled or is pending."
                                         showingAlert = true
                                     }
                                 } catch {
-                                    // Purchase failed
                                     alertMessage = "Failed to purchase: \(error.localizedDescription)"
                                     showingAlert = true
                                 }
                             }
                         }
                     }) {
-                        Text("Subscribe Now")
+                        Text("Upgrade Now")
                             .font(.headline)
                             .foregroundColor(backgroundColor)
                             .frame(maxWidth: .infinity)
@@ -85,6 +100,8 @@ struct SubscriptionView: View {
                     }
                     .padding(.top)
                     .disabled(selectedProduct == nil)
+                    
+                    footerView
                 }
                 .padding()
             }
@@ -115,6 +132,48 @@ struct SubscriptionView: View {
                 .font(.title2)
         }
     }
+    
+    private var footerView: some View {
+        VStack(spacing: 20) {
+            Button(action: {
+                Task {
+                    do {
+                        try await AppStore.sync()
+                    } catch {
+                        print(error)
+                    }
+                }
+            }) {
+                Text("Restore Purchases")
+                    .foregroundColor(accentColor)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(secondaryColor)
+                    .cornerRadius(10)
+            }
+            
+            VStack(spacing: 15) {
+                HStack {
+                    NavigationLink(destination: PrivacyPolicyView()) {
+                        Text("Privacy Policy")
+                    }
+                    Spacer()
+                    NavigationLink(destination: TermsAndConditionsView()) {
+                        Text("Terms & Conditions")
+                    }
+                }
+                .foregroundColor(accentColor)
+                
+                Text("Payment will be charged to your App Store account at confirmation of purchase. Subscription automatically renews unless turned off at least 24 hours before the end of the current period. Manage subscriptions in your Account Settings after purchase.")
+                    .font(.caption2)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+            }
+            .padding()
+            .background(secondaryColor)
+            .cornerRadius(10)
+        }
+    }
 }
 
 struct FeatureRow: View {
@@ -128,6 +187,7 @@ struct FeatureRow: View {
                 .foregroundColor(accentColor)
             Text(text)
                 .foregroundColor(.white)
+            Spacer()
         }
     }
 }
@@ -198,6 +258,27 @@ struct PlanButton: View {
     }
 }
 
+struct LimitationRow: View {
+    let icon: String
+    let text: String
+    let premium: String
+    let accentColor: Color
+    
+    var body: some View {
+        HStack(spacing: 15) {
+            Image(systemName: icon)
+                .foregroundColor(accentColor)
+            VStack(alignment: .leading) {
+                Text(text)
+                    .foregroundColor(.white)
+                Text(premium)
+                    .foregroundColor(accentColor)
+                    .font(.caption)
+            }
+            Spacer()
+        }
+    }
+}
 
 #Preview {
     SubscriptionView()

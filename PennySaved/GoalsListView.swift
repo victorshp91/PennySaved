@@ -35,6 +35,7 @@ struct GoalsListView: View {
     @State private var selectedSortOption: GoalSortOption = .dateDesc
     @State private var searchText = ""
     @State private var completionFilter: GoalCompletionFilter = .all
+    @State private var showingNewGoalView = false  // Add this line
 
     private func sortedGoals() -> [Goals] {
         var sortedGoals = goalsVm.goals
@@ -199,7 +200,18 @@ struct GoalsListView: View {
                                 .foregroundStyle(Color.red)
                         }
                     }
+                } else {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            showingNewGoalView = true
+                        }) {
+                            Image(systemName: "plus")
+                        }
+                    }
                 }
+            }
+            .sheet(isPresented: $showingNewGoalView) {
+                NewGoalView()
             }
         }
     }
