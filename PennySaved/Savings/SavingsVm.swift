@@ -11,6 +11,8 @@ import SwiftUI
 
 class SavingsVm: ObservableObject {
     
+    
+    
     private let viewContext: NSManagedObjectContext
     
     @Published var savings: [Saving] = []
@@ -65,5 +67,7 @@ class SavingsVm: ObservableObject {
             let savings = goal.saving?.allObjects as? [Saving]
             return savings?.reduce(0) { $0 + ($1.amount) } ?? 0
         }
+    
+    
 }
 

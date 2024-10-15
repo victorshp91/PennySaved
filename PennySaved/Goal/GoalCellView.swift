@@ -9,7 +9,7 @@ import SwiftUI
 
 struct GoalCellView: View {
     @State private var progress: Double = 0.0 // Progress of deck completion
-    @State var goal: Goals
+    @StateObject var goal: Goals
     @EnvironmentObject var goalsVm: GoalsVm  // Access the GoalsVm instance
     @State var isForSelect: Bool
     
@@ -57,7 +57,7 @@ struct GoalCellView: View {
                 }
                    
                 if !isForSelect {
-                    NavigationLink(destination: NewGoalView(isForEdit: true, goalForEdit: goal)) {
+                    NavigationLink(destination: GoalDetailView(goal: goal).environmentObject(goalsVm)) {
                         
                         Text("Details")
                             .foregroundStyle(Color("buttonPrimary"))

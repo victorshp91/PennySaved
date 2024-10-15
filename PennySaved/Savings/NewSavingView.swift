@@ -170,8 +170,7 @@ struct NewSavingView: View {
                     if validationResult.isValid {
                         if isForEdit {
                             updateSaving()
-                        }else {
-                            // Acción para guardar el ahorro
+                        } else {
                             saveSaving()
                         }
                     }
@@ -205,46 +204,9 @@ struct NewSavingView: View {
         }.scrollDismissesKeyboard(.immediately)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color("bg"))
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                if isForEdit {
-                    Button("Delete") {
-                        showDeleteAlert = true       // Trigger the alert
-                       
-                        
-                    }.foregroundStyle(.red)
-                        .alert(isPresented: $showDeleteAlert) {
-                            Alert(
-                                title: Text("Delete Saving"),
-                                message: Text("Are you sure you want to delete this saving?"),
-                                primaryButton: .destructive(Text("Delete")) {
-                                    if let saving = savingForEdit {
-                                        deleteSaving(saving: saving)
-                                    }
-                                },
-                                secondaryButton: .cancel()
-                            )
-                        }
-                }
-            }
-        }
     }
     
-    private func deleteSaving(saving: Saving) {
-        let context = PersistenceController.shared.container.viewContext
-
-        context.delete(saving) // Delete the Saving from the context
-        
-        // Save the context to persist the deletion
-        do {
-            try PersistenceController.shared.save()
-            savingVm.fetchSavings() // PARA ACUTALIZAR EL ARRAY CON LOS SAVINGS
-            self.presentationMode.wrappedValue.dismiss()
-            print("Saving deleted successfully.")
-        } catch {
-            print("Failed to delete saving: \(error.localizedDescription)")
-        }
-    }
+    
 
     
     // GUARDAR EN COREDATA

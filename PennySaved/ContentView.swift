@@ -115,7 +115,7 @@ struct ContentView: View {
                                     .cornerRadius(50)
                                 }
                                 
-                                Button(action: handleNewSavingTap) {
+                                Button(action: {handleNewSavingTap(storeKit: storeKit)}) {
                                     HStack{
                                         Text("New ThinkTwiceSave")
                                         Image(systemName: "plus")
@@ -126,7 +126,7 @@ struct ContentView: View {
                                         .cornerRadius(50)
                                     
                                 }
-                                Button(action: handleNewGoalTap) {
+                                Button(action: {handleNewGoalTap(storeKit: storeKit)}) {
                                     HStack {
                                         Text("New Goal")
                                         Image(systemName: "plus")
@@ -375,25 +375,23 @@ struct ContentView: View {
         
     }
     
-    private func handleNewGoalTap() {
-        if !hasActiveSubscription() && goalsVm.goalCount >= 3 {
+    func handleNewGoalTap(storeKit: StoreKitManager) {
+        if storeKit.purchasedProductIDs.isEmpty && goalsVm.goalCount >= 3 {
             showSubscriptionView = true
         } else {
             showNewGoalView = true
         }
     }
     
-    private func handleNewSavingTap() {
-        if !hasActiveSubscription() && savingsVm.savingsCount >= 5 {
+    func handleNewSavingTap(storeKit: StoreKitManager) {
+        if storeKit.purchasedProductIDs.isEmpty && savingsVm.savingsCount >= 5 {
             showSubscriptionView = true
         } else {
             showNewSavingView = true
         }
     }
     
-    private func hasActiveSubscription() -> Bool {
-        return !storeKit.purchasedProductIDs.isEmpty
-    }
+    
 }
 
 

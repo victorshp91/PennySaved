@@ -205,46 +205,9 @@ struct NewGoalView: View {
         }.scrollDismissesKeyboard(.immediately)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("bg"))
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if isForEdit {
-                        Button("Delete") {
-                            showDeleteAlert = true       // Trigger the alert
-                           
-                            
-                        }.foregroundStyle(.red)
-                            .alert(isPresented: $showDeleteAlert) {
-                                Alert(
-                                    title: Text("Delete Goal"),
-                                    message: Text("Are you sure you want to delete this goal?"),
-                                    primaryButton: .destructive(Text("Delete")) {
-                                        if let goal = goalForEdit {
-                                            deleteSaving(goal: goal)
-                                        }
-                                    },
-                                    secondaryButton: .cancel()
-                                )
-                            }
-                    }
-                }
-            }
+            
     }
-    // delete saving
-    private func deleteSaving(goal: Goals) {
-        let context = PersistenceController.shared.container.viewContext
 
-        context.delete(goal) // Delete the Saving from the context
-        
-        // Save the context to persist the deletion
-        do {
-            try PersistenceController.shared.save()
-            goalsVm.fetchGols() // PARA ACUTALIZAR EL ARRAY CON LOS SAVINGS
-            self.presentationMode.wrappedValue.dismiss()
-            print("Goal deleted successfully.")
-        } catch {
-            print("Failed to delete goal: \(error.localizedDescription)")
-        }
-    }
     
     // GUARDAR EN COREDATA
     private func saveGoal() {

@@ -25,7 +25,7 @@ struct savingTransactionCellView: View {
             VStack(alignment: .leading) {
                 Text(saving.name ?? "Not Name").bold()
                 Text("Saved on \(saving.date ?? Date(), style: .date)").foregroundStyle(.secondary)
-                NavigationLink(destination: NewSavingView(isForEdit: true, savingForEdit: saving).environmentObject(storeKit)) {
+                NavigationLink(destination: SavingDetailView(saving: saving).environmentObject(storeKit)) {
                     Text("Details")
                         .foregroundStyle(Color("buttonPrimary"))
                 }
