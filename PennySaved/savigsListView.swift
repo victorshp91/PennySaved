@@ -126,9 +126,10 @@ struct savigsListView: View {
                             Picker("Select Category", selection: $selectedCategory) {
                                 Text("All Categories").tag(Category?.none) // Optional, to show all categories
                                 ForEach(categories, id: \.name) { category in
-                                    HStack(spacing: 10) {
+                                    HStack(spacing: 20) {
                                         Image(systemName: "\(category.icon ?? "questionmark")")
-                                        Text(category.name ?? "Unknown").tag(category as Category?)
+                                        
+                                        Text("  \(category.name ?? "Unknown")").tag(category as Category?)
                                     }.tag(category as Category?)
                                 }
                             }

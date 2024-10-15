@@ -21,6 +21,7 @@ struct PennySavedApp: App {
                 LoadingAppView()
                     .onAppear {
                         setupCloudKitSyncObserver()
+                        
                     }
             } else {
                 ContentView()

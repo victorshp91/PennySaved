@@ -14,7 +14,12 @@ struct PremiumBadgeView: View {
     var body: some View {
         Group {
             if storeKit.hasActiveSubscription {
-                premiumBadge
+                VStack(spacing: 4) {
+                    premiumBadge
+                    if !storeKit.hasLifetimeSubscription {
+                        changeSubscriptionButton
+                    }
+                }
             } else {
                 upgradeToPremiumButton
             }
@@ -63,6 +68,20 @@ struct PremiumBadgeView: View {
                 RoundedRectangle(cornerRadius: 20)
                     .stroke(Color("buttonPrimary"), lineWidth: 2)
             )
+        }
+    }
+    
+    private var changeSubscriptionButton: some View {
+        Button(action: {
+            showingSubscriptionView = true
+        }) {
+            Text("Change Subscription")
+                .font(.system(size: 10, weight: .medium))
+                .foregroundColor(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.black.opacity(0.4))
+                .cornerRadius(12)
         }
     }
 }

@@ -14,7 +14,6 @@ struct SubscriptionView: View {
     @State private var selectedProduct: Product?
     @State private var showingAlert = false
     @State private var alertMessage = ""
-    @State private var purchaseSuccessful = false
     @Environment(\.dismiss) private var dismiss
     
     let accentColor = Color(hex: "C9F573")
@@ -53,7 +52,7 @@ struct SubscriptionView: View {
                         FeatureRow(icon: "flag.fill", text: "Unlimited ThinkTwiceSave Goals", accentColor: accentColor)
                         FeatureRow(icon: "folder.fill", text: "Unlimited Custom Categories", accentColor: accentColor)
                         FeatureRow(icon: "chart.pie.fill", text: "Detailed savings analysis", accentColor: accentColor)
-                        FeatureRow(icon: "icloud.and.arrow.up", text: "Cloud sync and backup", accentColor: accentColor)
+                       //FeatureRow(icon: "icloud.and.arrow.up", text: "Cloud sync and backup", accentColor: accentColor)
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -63,7 +62,7 @@ struct SubscriptionView: View {
                     VStack(spacing: 15) {
                         ForEach(storeKit.products, id: \.id) { product in
                             PlanButton(product: product,
-                                       isSelected: selectedProduct == product,
+                                       isSelected: isProductSelected(product),
                                        accentColor: accentColor,
                                        secondaryColor: secondaryColor,
                                        action: { selectedProduct = product })
@@ -75,10 +74,9 @@ struct SubscriptionView: View {
                             Task {
                                 do {
                                     if (try await storeKit.purchase(product)) != nil {
-                                        alertMessage = "Thank you for your purchase!"
-                                        purchaseSuccessful = true
-                                        showingAlert = true
                                         await storeKit.updatePurchasedProducts()
+                                        await storeKit.updateSubscriptionStatus()
+                                        dismiss()  // Close the view after successful purchase
                                     } else {
                                         alertMessage = "Purchase was cancelled or is pending."
                                         showingAlert = true
@@ -113,12 +111,14 @@ struct SubscriptionView: View {
                 Alert(
                     title: Text("Purchase Status"),
                     message: Text(alertMessage),
-                    dismissButton: .default(Text("OK")) {
-                        if purchaseSuccessful {
-                            dismiss()
-                        }
-                    }
+                    dismissButton: .default(Text("OK"))
                 )
+            }
+            .onAppear {
+                Task {
+                    await storeKit.updateSubscriptionStatus()
+                    selectInitialProduct()
+                }
             }
         }
     }
@@ -173,6 +173,18 @@ struct SubscriptionView: View {
             .background(secondaryColor)
             .cornerRadius(10)
         }
+    }
+    
+    private func selectInitialProduct() {
+        if let activeSubscription = storeKit.activeSubscription {
+            selectedProduct = activeSubscription
+        } else {
+            selectedProduct = storeKit.products.first { $0.id == "ThinkTwiceLifetime" }
+        }
+    }
+    
+    private func isProductSelected(_ product: Product) -> Bool {
+        return selectedProduct?.id == product.id || storeKit.activeSubscription?.id == product.id
     }
 }
 
