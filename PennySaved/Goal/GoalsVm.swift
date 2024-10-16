@@ -66,4 +66,13 @@ class GoalsVm: ObservableObject {
     var goalCount: Int {
         return goals.count
     }
+    
+    @MainActor
+    func handleNewGoalTap(storeKit: StoreKitManager, showSubscriptionView: @escaping () -> Void, showNewGoalView: @escaping () -> Void) {
+        if storeKit.purchasedProductIDs.isEmpty && goalCount >= 6 {
+            showSubscriptionView()
+        } else {
+            showNewGoalView()
+        }
+    }
 }

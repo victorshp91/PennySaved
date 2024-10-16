@@ -11,7 +11,7 @@ import Foundation
 class CategoryManager {
     static let shared = CategoryManager(viewContext: PersistenceController.shared.container.viewContext)
     private let viewContext: NSManagedObjectContext
-    private let maxFreeCategories = 2
+    private let maxFreeCategories = 6
 
     init(viewContext: NSManagedObjectContext) {
         self.viewContext = viewContext

@@ -115,7 +115,13 @@ struct ContentView: View {
                                     .cornerRadius(50)
                                 }
                                 
-                                Button(action: {handleNewSavingTap(storeKit: storeKit)}) {
+                                Button(action: {
+                                    savingsVm.handleNewSavingTap(
+                                        storeKit: storeKit,
+                                        showSubscriptionView: { showSubscriptionView = true },
+                                        showNewSavingView: { showNewSavingView = true }
+                                    )
+                                }) {
                                     HStack{
                                         Text("New ThinkTwiceSave")
                                         Image(systemName: "plus")
@@ -126,7 +132,13 @@ struct ContentView: View {
                                         .cornerRadius(50)
                                     
                                 }
-                                Button(action: {handleNewGoalTap(storeKit: storeKit)}) {
+                                Button(action: {
+                                    goalsVm.handleNewGoalTap(
+                                        storeKit: storeKit,
+                                        showSubscriptionView: { showSubscriptionView = true },
+                                        showNewGoalView: { showNewGoalView = true }
+                                    )
+                                }) {
                                     HStack {
                                         Text("New Goal")
                                         Image(systemName: "plus")
@@ -375,21 +387,9 @@ struct ContentView: View {
         
     }
     
-    func handleNewGoalTap(storeKit: StoreKitManager) {
-        if storeKit.purchasedProductIDs.isEmpty && goalsVm.goalCount >= 3 {
-            showSubscriptionView = true
-        } else {
-            showNewGoalView = true
-        }
-    }
     
-    func handleNewSavingTap(storeKit: StoreKitManager) {
-        if storeKit.purchasedProductIDs.isEmpty && savingsVm.savingsCount >= 5 {
-            showSubscriptionView = true
-        } else {
-            showNewSavingView = true
-        }
-    }
+    
+   
     
     
 }

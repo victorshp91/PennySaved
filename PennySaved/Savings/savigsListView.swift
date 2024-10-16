@@ -33,6 +33,7 @@ struct savigsListView: View {
             "July", "August", "September", "October", "November", "December"
         ]
     @State private var showingNewSavingView = false  // Add this line
+    @State private var showSubscriptionView = false
     @EnvironmentObject var savingsVm: SavingsVm  // Add this line if not already present
 
     // Function to sort savings based on selected option
@@ -174,7 +175,11 @@ struct savigsListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        showingNewSavingView = true
+                        savingsVm.handleNewSavingTap(
+                            storeKit: storeKit,
+                            showSubscriptionView: { showSubscriptionView = true },
+                            showNewSavingView: { showingNewSavingView = true }
+                            )
                     }) {
                         Image(systemName: "plus")
                     }
@@ -183,6 +188,9 @@ struct savigsListView: View {
             .sheet(isPresented: $showingNewSavingView) {
                 NewSavingView()
             }
+                        .sheet(isPresented: $showSubscriptionView) {
+                            SubscriptionView()
+                        }
         }
     }
 }

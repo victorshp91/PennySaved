@@ -61,6 +61,14 @@ class SavingsVm: ObservableObject {
     }
 
     
+    @MainActor func handleNewSavingTap(storeKit: StoreKitManager, showSubscriptionView: @escaping () -> Void, showNewSavingView: @escaping () -> Void) {
+        if storeKit.purchasedProductIDs.isEmpty && savingsCount >= 12 {
+            showSubscriptionView()
+        } else {
+            showNewSavingView()
+        }
+    }
+    
     
     // Función para sumar el monto total de los savings asociados a un goal
         func totalSavings(for goal: Goals) -> Double {

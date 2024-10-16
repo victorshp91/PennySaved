@@ -25,6 +25,7 @@ enum GoalCompletionFilter: String, CaseIterable, Identifiable {
 
 struct GoalsListView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var storeKit: StoreKitManager
     @EnvironmentObject var goalsVm: GoalsVm
     @State var isForSelect: Bool
     @Binding var selectedGoal: Goals?
@@ -36,6 +37,7 @@ struct GoalsListView: View {
     @State private var searchText = ""
     @State private var completionFilter: GoalCompletionFilter = .all
     @State private var showingNewGoalView = false  // Add this line
+    @State private var showSubscriptionView = false
 
     private func sortedGoals() -> [Goals] {
         var sortedGoals = goalsVm.goals
@@ -203,7 +205,11 @@ struct GoalsListView: View {
                 } else {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
-                            showingNewGoalView = true
+                            goalsVm.handleNewGoalTap(
+                                storeKit: storeKit,
+                                showSubscriptionView: { showSubscriptionView = true },
+                                showNewGoalView: { showingNewGoalView = true }
+                            )
                         }) {
                             Image(systemName: "plus")
                         }
@@ -212,6 +218,9 @@ struct GoalsListView: View {
             }
             .sheet(isPresented: $showingNewGoalView) {
                 NewGoalView()
+            }
+            .sheet(isPresented: $showSubscriptionView) {
+                SubscriptionView()
             }
         }
     }

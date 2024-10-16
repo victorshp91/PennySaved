@@ -99,7 +99,7 @@ struct NewGoalView: View {
                                         }
                                     }
                                     
-                                    if isForEdit && goal.targetAmount < Double(targetAmount) ?? 0.0{
+                                    if isForEdit && currentAmount < Double(targetAmount) ?? 0.0{
                                         VStack(alignment: .leading, spacing: 10) {
                                             Toggle(isOn: $completed) {
                                                 HStack {
